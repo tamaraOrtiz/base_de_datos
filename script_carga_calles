@@ -1,0 +1,8 @@
+use proyectobd;
+select * from Calles;
+
+insert into Calles(id,nombre) values
+	(1, 'Mcal Estigarribia'),
+	(2, 'Juan Leon Mayorquin'),
+	(3, 'Carlos Antonio Lopez'),
+	(4, 'Cerro Cora');

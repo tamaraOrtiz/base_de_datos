@@ -1,10 +1,10 @@
 --
 -- ER/Studio 7.5 SQL Code Generation
 -- Company :      Microsoft
--- Project :      ProyectoDB.dm1
+-- Project :      basededatos.dm1
 -- Author :       Microsoft
 --
--- Date Created : Thursday, May 16, 2013 17:51:09
+-- Date Created : Sunday, May 19, 2013 12:56:06
 -- Target DBMS : MySQL 5.x
 --
 
@@ -40,15 +40,14 @@ CREATE TABLE Categorias(
 --
 
 CREATE TABLE Clientes(
-    id                  DECIMAL(10, 0)    NOT NULL,
-    nombre              VARCHAR(100)      NOT NULL,
-    direccion           DECIMAL(10, 0),
-    telefono            VARCHAR(100)      NOT NULL,
-    contacto            VARCHAR(100)      NOT NULL,
-    mail                VARCHAR(100)      NOT NULL,
-    saldo               DECIMAL(10, 0)    NOT NULL,
-    categoria           DECIMAL(1, 0)     NOT NULL,
-    linea_de_credito    DECIMAL(10, 0)    NOT NULL,
+    id           DECIMAL(10, 0)    NOT NULL,
+    nombre       VARCHAR(100)      NOT NULL,
+    direccion    DECIMAL(10, 0),
+    telefono     VARCHAR(100)      NOT NULL,
+    contacto     VARCHAR(100)      NOT NULL,
+    mail         VARCHAR(100)      NOT NULL,
+    saldo        DECIMAL(10, 0)    NOT NULL,
+    categoria    DECIMAL(1, 0)     NOT NULL,
     PRIMARY KEY (id)
 )ENGINE=MYISAM
 ;
@@ -61,13 +60,12 @@ CREATE TABLE Clientes(
 
 CREATE TABLE Compra_detalles(
     id                DECIMAL(10, 0)    NOT NULL,
-    compra_id         DECIMAL(10, 0),
+    compra_id         DECIMAL(10, 0)    NOT NULL,
     producto_id       DECIMAL(10, 0)    NOT NULL,
     costo_unitario    DECIMAL(10, 0)    NOT NULL,
     cantidad          DECIMAL(6, 0)     NOT NULL,
     iva               DECIMAL(2, 0)     NOT NULL,
-    saldo             DECIMAL(10, 0)    NOT NULL,
-    PRIMARY KEY (id)
+    PRIMARY KEY (id, compra_id)
 )ENGINE=MYISAM
 ;
 
@@ -79,11 +77,12 @@ CREATE TABLE Compra_detalles(
 
 CREATE TABLE Compra_facturas(
     id                   DECIMAL(10, 0)    NOT NULL,
-    fecha_emision        DATE              NOT NULL,
     proveedor            DECIMAL(10, 0)    NOT NULL,
     deposito_ingreso     DECIMAL(10, 0)    NOT NULL,
     condicion            DECIMAL(1, 0)     NOT NULL,
+    fecha_emision        DATE              NOT NULL,
     fecha_vencimiento    DATE              NOT NULL,
+    saldo                DECIMAL(10, 0)    NOT NULL,
     PRIMARY KEY (id)
 )ENGINE=MYISAM
 ;
@@ -110,6 +109,7 @@ CREATE TABLE Condiciones(
 CREATE TABLE Depositos(
     id           DECIMAL(10, 0)    NOT NULL,
     direccion    DECIMAL(10, 0),
+    nombre       VARCHAR(10)       NOT NULL,
     PRIMARY KEY (id)
 )ENGINE=MYISAM
 ;
@@ -125,6 +125,7 @@ CREATE TABLE Detalles_orden_de_pago_clientes(
     orden_pago_id    DECIMAL(10, 0)    NOT NULL,
     importe          DECIMAL(10, 0)    NOT NULL,
     forma_de_pago    VARCHAR(100)      NOT NULL,
+    pc_id            DECIMAL(10, 0)    NOT NULL,
     PRIMARY KEY (id)
 )ENGINE=MYISAM
 ;
@@ -137,10 +138,10 @@ CREATE TABLE Detalles_orden_de_pago_clientes(
 
 CREATE TABLE Detalles_orden_de_pago_proveedores(
     id               DECIMAL(10, 0)    NOT NULL,
-    factura_id       DECIMAL(10, 0)    NOT NULL,
     orden_pago_id    DECIMAL(10, 0)    NOT NULL,
     importe          DECIMAL(10, 0)    NOT NULL,
     forma_de_pago    VARCHAR(100)      NOT NULL,
+    pp_id            DECIMAL(10, 0)    NOT NULL,
     PRIMARY KEY (id)
 )ENGINE=MYISAM
 ;
@@ -212,10 +213,10 @@ CREATE TABLE Lineas_productos(
 --
 
 CREATE TABLE Lista_precios(
-    id                     CHAR(10)          NOT NULL,
-    producto_id            DECIMAL(10, 0)    NOT NULL,
-    precio                 DECIMAL(10, 0)    NOT NULL,
-    fecha_actualizacion    DATE              NOT NULL,
+    id                   CHAR(10)          NOT NULL,
+    producto_id          DECIMAL(10, 0)    NOT NULL,
+    precio               DECIMAL(10, 0)    NOT NULL,
+    fecha_actualizada    DATE              NOT NULL,
     PRIMARY KEY (id)
 )ENGINE=MYISAM
 ;
@@ -243,6 +244,8 @@ CREATE TABLE Ordenes_de_pago_clientes(
     id               DECIMAL(10, 0)    NOT NULL,
     factura_id       DECIMAL(10, 0)    NOT NULL,
     fecha_de_pago    DATE              NOT NULL,
+    pc_id            DECIMAL(10, 0)    NOT NULL,
+    importe          DECIMAL(10, 0)    NOT NULL,
     PRIMARY KEY (id)
 )ENGINE=MYISAM
 ;
@@ -255,8 +258,39 @@ CREATE TABLE Ordenes_de_pago_clientes(
 
 CREATE TABLE Ordenes_de_pago_proveedores(
     id               DECIMAL(10, 0)    NOT NULL,
+    importe          DECIMAL(10, 0)    NOT NULL,
+    factura_id       DECIMAL(10, 0)    NOT NULL,
     fecha_de_pago    DATE              NOT NULL,
-    proveedor_id     DECIMAL(10, 0)    NOT NULL,
+    pp_id            DECIMAL(10, 0)    NOT NULL,
+    PRIMARY KEY (id)
+)ENGINE=MYISAM
+;
+
+
+
+-- 
+-- TABLE: Pago_cliente 
+--
+
+CREATE TABLE Pago_cliente(
+    id             DECIMAL(10, 0)    NOT NULL,
+    fecha          DATE              NOT NULL,
+    observacion    CHAR(10),
+    cliente        DECIMAL(10, 0)    NOT NULL,
+    PRIMARY KEY (id)
+)ENGINE=MYISAM
+;
+
+
+
+-- 
+-- TABLE: pago_proveedor 
+--
+
+CREATE TABLE pago_proveedor(
+    id             DECIMAL(10, 0)    NOT NULL,
+    fecha          DATE              NOT NULL,
+    Observacion    VARCHAR(10),
     PRIMARY KEY (id)
 )ENGINE=MYISAM
 ;
@@ -269,8 +303,8 @@ CREATE TABLE Ordenes_de_pago_proveedores(
 
 CREATE TABLE Productos(
     id                 DECIMAL(10, 0)    NOT NULL,
-    linea              DECIMAL(10, 0)    NOT NULL,
     marca              DECIMAL(10, 0),
+    linea              DECIMAL(10, 0)    NOT NULL,
     codigo_de_barra    DECIMAL(13, 0)    NOT NULL,
     descripcion        VARCHAR(100),
     costo_unitario     DECIMAL(10, 0)    NOT NULL,
@@ -305,11 +339,10 @@ CREATE TABLE Proveedores(
 --
 
 CREATE TABLE Stocks(
-    id              DECIMAL(10, 0)    NOT NULL,
     producto_id     DECIMAL(10, 0)    NOT NULL,
-    cantidad        DECIMAL(10, 0)    NOT NULL,
     depositos_id    DECIMAL(10, 0)    NOT NULL,
-    PRIMARY KEY (id)
+    cantidad        DECIMAL(10, 0)    NOT NULL,
+    PRIMARY KEY (producto_id, depositos_id)
 )ENGINE=MYISAM
 ;
 
@@ -324,7 +357,7 @@ CREATE TABLE Transferencia_detalles(
     transferencia_id    DECIMAL(10, 0)    NOT NULL,
     producto_id         DECIMAL(10, 0)    NOT NULL,
     cantidad            DECIMAL(10, 0)    NOT NULL,
-    PRIMARY KEY (id)
+    PRIMARY KEY (id, transferencia_id)
 )ENGINE=MYISAM
 ;
 
@@ -336,10 +369,10 @@ CREATE TABLE Transferencia_detalles(
 
 CREATE TABLE Transferencias(
     id                     DECIMAL(10, 0)    NOT NULL,
-    deposito_origen        DECIMAL(10, 0),
-    deposito_destino       DECIMAL(10, 0),
     encargado_traslado     VARCHAR(100)      NOT NULL,
     autorizado_empleado    DECIMAL(10, 0),
+    deposito_origen        DECIMAL(10, 0),
+    deposito_destino       DECIMAL(10, 0),
     PRIMARY KEY (id)
 )ENGINE=MYISAM
 ;
@@ -358,7 +391,7 @@ CREATE TABLE Venta_detalles(
     cantidad           DECIMAL(6, 0)     NOT NULL,
     iva                DECIMAL(2, 0)     NOT NULL,
     saldo              DECIMAL(10, 0)    NOT NULL,
-    PRIMARY KEY (id)
+    PRIMARY KEY (id, venta_id)
 )ENGINE=MYISAM
 ;
 
@@ -370,11 +403,10 @@ CREATE TABLE Venta_detalles(
 
 CREATE TABLE Venta_facturas(
     id                   DECIMAL(10, 0)    NOT NULL,
-    vendedor             DECIMAL(10, 0)    NOT NULL,
-    fecha_emision        DATE              NOT NULL,
     cliente              DECIMAL(10, 0)    NOT NULL,
-    condicion            DECIMAL(1, 0),
+    fecha_emision        DATE              NOT NULL,
     fecha_vencimiento    DATE              NOT NULL,
+    condicion            DECIMAL(1, 0),
     deposito_egreso      DECIMAL(10, 0),
     PRIMARY KEY (id)
 )ENGINE=MYISAM
@@ -451,6 +483,11 @@ ALTER TABLE Detalles_orden_de_pago_clientes ADD CONSTRAINT RefOrdenes_de_pago_cl
     REFERENCES Ordenes_de_pago_clientes(id)
 ;
 
+ALTER TABLE Detalles_orden_de_pago_clientes ADD CONSTRAINT RefPago_cliente78 
+    FOREIGN KEY (pc_id)
+    REFERENCES Pago_cliente(id)
+;
+
 
 -- 
 -- TABLE: Detalles_orden_de_pago_proveedores 
@@ -461,9 +498,9 @@ ALTER TABLE Detalles_orden_de_pago_proveedores ADD CONSTRAINT RefOrdenes_de_pago
     REFERENCES Ordenes_de_pago_proveedores(id)
 ;
 
-ALTER TABLE Detalles_orden_de_pago_proveedores ADD CONSTRAINT RefCompra_detalles79 
-    FOREIGN KEY (factura_id)
-    REFERENCES Compra_detalles(id)
+ALTER TABLE Detalles_orden_de_pago_proveedores ADD CONSTRAINT Refpago_proveedor81 
+    FOREIGN KEY (pp_id)
+    REFERENCES pago_proveedor(id)
 ;
 
 
@@ -516,14 +553,34 @@ ALTER TABLE Ordenes_de_pago_clientes ADD CONSTRAINT RefVenta_facturas74
     REFERENCES Venta_facturas(id)
 ;
 
+ALTER TABLE Ordenes_de_pago_clientes ADD CONSTRAINT RefPago_cliente77 
+    FOREIGN KEY (pc_id)
+    REFERENCES Pago_cliente(id)
+;
+
 
 -- 
 -- TABLE: Ordenes_de_pago_proveedores 
 --
 
-ALTER TABLE Ordenes_de_pago_proveedores ADD CONSTRAINT RefProveedores78 
-    FOREIGN KEY (proveedor_id)
-    REFERENCES Proveedores(id)
+ALTER TABLE Ordenes_de_pago_proveedores ADD CONSTRAINT RefCompra_facturas44 
+    FOREIGN KEY (factura_id)
+    REFERENCES Compra_facturas(id)
+;
+
+ALTER TABLE Ordenes_de_pago_proveedores ADD CONSTRAINT Refpago_proveedor80 
+    FOREIGN KEY (pp_id)
+    REFERENCES pago_proveedor(id)
+;
+
+
+-- 
+-- TABLE: Pago_cliente 
+--
+
+ALTER TABLE Pago_cliente ADD CONSTRAINT RefClientes75 
+    FOREIGN KEY (cliente)
+    REFERENCES Clientes(id)
 ;
 
 
@@ -646,10 +703,6 @@ ALTER TABLE Venta_facturas ADD CONSTRAINT RefCondiciones17
     REFERENCES Condiciones(id)
 ;
 
-ALTER TABLE Venta_facturas ADD CONSTRAINT RefEmpleados77 
-    FOREIGN KEY (vendedor)
-    REFERENCES Empleados(id)
-;
 
 insert into Calles(id,nombre) values
 	(1, 'Mcal Estigarribia'),
@@ -659,7 +712,7 @@ insert into Calles(id,nombre) values
 	(5, '14 de mayo'),
 	(6, 'Tomas Romero Pereira');
 
-insert into Direcciones(id,numero,calle_principal,calle2,calle3) values
+insert into Direcciones(id,numero,calle_principal,calle1,calle2) values
 	(1, 110, 1,2,3),
 	(2, 120, 1,3,4),
 	(3, 150, 2,3,4),
@@ -673,4 +726,45 @@ insert into Clientes(id,nombre,direccion,telefono,contacto,mail,saldo,categoria)
 	(3,'Petrosur',3,'200307','Marian Aranda','marian@uni.edu.py',0,1),
 	(4,'Rocio Otazu',4,'200308','Rocio Otazu','roco@uni.edu.py',1000000,2),
 	(5,'Liz Garcia',5,'200308','Liz Garcia','liz@uni.edu.py',1000000,2),
-	(6,'Marcos Ledezma',6,'200310','Marcos Ledezma','marcos@uni.edu.py',1000000,2)
+	(6,'Marcos Ledezma',6,'200310','Marcos Ledezma','marcos@uni.edu.py',1000000,2);
+
+insert into Marcas_productos(id,nombre) values
+	(1,'Tramontina'),
+	(2,'Brisa'),
+	(3,'Impaco'),
+	(4,'Tigre'),
+	(5,'Leon'),
+	(6,'Fore');
+
+insert into Lineas_productos(id,descripcion,nombre) values
+	(1,'4 mm', 'cable'),
+	(2,'macho','toma corriente'),
+	(3,'2 mtrs. bronce','jabalina'),
+	(4,'3/4','canho corrugado'),
+	(5,'negro, marron y blanco','porta foco'),
+	(6,'100 w','foco');
+
+insert into Impuestos(id,nombre,porcentaje) values
+	(1,'IVA 0%',0),
+	(2,'IVA 5%',5),
+	(3,'IVA 10%',10);
+
+insert into Categorias(id,nombre,linea_credito) values
+	(1,'minorista',2000000),
+	(2,'mayorista',10000000);
+
+insert into Productos(id,marca,linea,codigo_de_barra,descripcion,costo_unitario,iva_impuesto) values
+	(1,1,1,254678559,'4 mm',800,2),
+	(2,2,2,145758895,'macho',300,3),
+	(3,3,3,558799486,'1 mtr.',400,1),
+	(4,4,4,587945784,'3/4',1000,2),
+	(5,5,4,784595227,'blanco',1500,1),
+	(6,6,6,214557845,'60 w',1000,3);
+
+insert into Empleados(id,nombre,direccion,telefono,mail) values
+	(1,'Juan Petta',1,'200305','juan@uni.edu.py'),
+	(2,'Cesar Ibarrola',2,'200306','cesar@uni.edu.py'),
+	(3,'Petrosur',3,'200307','marian@uni.edu.py'),
+	(4,'Rocio Otazu',4,'200308','roco@uni.edu.py'),
+	(5,'Liz Garcia',5,'200308','liz@uni.edu.py'),
+	(6,'Marcos Ledezma',6,'200310','marcos@uni.edu.py');

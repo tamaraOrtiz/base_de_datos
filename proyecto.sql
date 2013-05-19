@@ -686,3 +686,14 @@ insert into Impuestos(id,nombre,porcentaje) values
 insert into Categorias(id,nombre,linea_credito) values
 	(1,'minorista',2000000),
 	(2,'mayorista',10000000);
+
+insert into Empleados(id,nombre,direccion,telefono,mail) values
+	(1,'Juan Petta',1,'200305','juan@uni.edu.py'),
+	(2,'Cesar Ibarrola',2,'200306','cesar@uni.edu.py'),
+	(3,'Petrosur',3,'200307','marian@uni.edu.py'),
+	(4,'Rocio Otazu',4,'200308','roco@uni.edu.py'),
+	(5,'Liz Garcia',5,'200308','liz@uni.edu.py'),
+	(6,'Marcos Ledezma',6,'200310','marcos@uni.edu.py');
+
+
+

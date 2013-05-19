@@ -4,7 +4,7 @@
 -- Project :      basededatos.dm1
 -- Author :       Microsoft
 --
--- Date Created : Sunday, May 19, 2013 12:56:06
+-- Date Created : Sunday, May 19, 2013 16:07:33
 -- Target DBMS : MySQL 5.x
 --
 
@@ -27,7 +27,7 @@ CREATE TABLE Calles(
 
 CREATE TABLE Categorias(
     id               DECIMAL(1, 0)     NOT NULL,
-    nombre           VARCHAR(18)       NOT NULL,
+    nombre           VARCHAR(100)      NOT NULL,
     linea_credito    DECIMAL(10, 0)    NOT NULL,
     PRIMARY KEY (id)
 )ENGINE=MYISAM
@@ -41,13 +41,13 @@ CREATE TABLE Categorias(
 
 CREATE TABLE Clientes(
     id           DECIMAL(10, 0)    NOT NULL,
-    nombre       VARCHAR(100)      NOT NULL,
     direccion    DECIMAL(10, 0),
+    nombre       VARCHAR(100)      NOT NULL,
+    categoria    DECIMAL(1, 0)     NOT NULL,
     telefono     VARCHAR(100)      NOT NULL,
     contacto     VARCHAR(100)      NOT NULL,
     mail         VARCHAR(100)      NOT NULL,
     saldo        DECIMAL(10, 0)    NOT NULL,
-    categoria    DECIMAL(1, 0)     NOT NULL,
     PRIMARY KEY (id)
 )ENGINE=MYISAM
 ;
@@ -63,7 +63,7 @@ CREATE TABLE Compra_detalles(
     compra_id         DECIMAL(10, 0)    NOT NULL,
     producto_id       DECIMAL(10, 0)    NOT NULL,
     costo_unitario    DECIMAL(10, 0)    NOT NULL,
-    cantidad          DECIMAL(6, 0)     NOT NULL,
+    cantidad          DECIMAL(10, 0)    NOT NULL,
     iva               DECIMAL(2, 0)     NOT NULL,
     PRIMARY KEY (id, compra_id)
 )ENGINE=MYISAM
@@ -109,7 +109,7 @@ CREATE TABLE Condiciones(
 CREATE TABLE Depositos(
     id           DECIMAL(10, 0)    NOT NULL,
     direccion    DECIMAL(10, 0),
-    nombre       VARCHAR(10)       NOT NULL,
+    nombre       VARCHAR(100)      NOT NULL,
     PRIMARY KEY (id)
 )ENGINE=MYISAM
 ;
@@ -123,9 +123,9 @@ CREATE TABLE Depositos(
 CREATE TABLE Detalles_orden_de_pago_clientes(
     id               DECIMAL(10, 0)    NOT NULL,
     orden_pago_id    DECIMAL(10, 0)    NOT NULL,
+    pc_id            DECIMAL(10, 0)    NOT NULL,
     importe          DECIMAL(10, 0)    NOT NULL,
     forma_de_pago    VARCHAR(100)      NOT NULL,
-    pc_id            DECIMAL(10, 0)    NOT NULL,
     PRIMARY KEY (id)
 )ENGINE=MYISAM
 ;
@@ -139,9 +139,9 @@ CREATE TABLE Detalles_orden_de_pago_clientes(
 CREATE TABLE Detalles_orden_de_pago_proveedores(
     id               DECIMAL(10, 0)    NOT NULL,
     orden_pago_id    DECIMAL(10, 0)    NOT NULL,
+    pp_id            DECIMAL(10, 0)    NOT NULL,
     importe          DECIMAL(10, 0)    NOT NULL,
     forma_de_pago    VARCHAR(100)      NOT NULL,
-    pp_id            DECIMAL(10, 0)    NOT NULL,
     PRIMARY KEY (id)
 )ENGINE=MYISAM
 ;
@@ -154,10 +154,10 @@ CREATE TABLE Detalles_orden_de_pago_proveedores(
 
 CREATE TABLE Direcciones(
     id                 DECIMAL(10, 0)    NOT NULL,
-    numero             DECIMAL(10, 0),
     calle_principal    DECIMAL(10, 0)    NOT NULL,
     calle1             DECIMAL(10, 0)    NOT NULL,
     calle2             DECIMAL(10, 0)    NOT NULL,
+    numero             DECIMAL(10, 0),
     PRIMARY KEY (id)
 )ENGINE=MYISAM
 ;
@@ -186,7 +186,7 @@ CREATE TABLE Empleados(
 
 CREATE TABLE Impuestos(
     id            DECIMAL(2, 0)    NOT NULL,
-    nombre        CHAR(10),
+    nombre        VARCHAR(100)     NOT NULL,
     porcentaje    DECIMAL(5, 2)    NOT NULL,
     PRIMARY KEY (id)
 )ENGINE=MYISAM
@@ -200,8 +200,8 @@ CREATE TABLE Impuestos(
 
 CREATE TABLE Lineas_productos(
     id             DECIMAL(10, 0)    NOT NULL,
-    descripcion    VARCHAR(100),
     nombre         VARCHAR(100)      NOT NULL,
+    descripcion    VARCHAR(100),
     PRIMARY KEY (id)
 )ENGINE=MYISAM
 ;
@@ -213,7 +213,7 @@ CREATE TABLE Lineas_productos(
 --
 
 CREATE TABLE Lista_precios(
-    id                   CHAR(10)          NOT NULL,
+    id                   DECIMAL(10, 0)    NOT NULL,
     producto_id          DECIMAL(10, 0)    NOT NULL,
     precio               DECIMAL(10, 0)    NOT NULL,
     fecha_actualizada    DATE              NOT NULL,
@@ -229,7 +229,7 @@ CREATE TABLE Lista_precios(
 
 CREATE TABLE Marcas_productos(
     id        DECIMAL(10, 0)    NOT NULL,
-    nombre    VARCHAR(10),
+    nombre    VARCHAR(100)      NOT NULL,
     PRIMARY KEY (id)
 )ENGINE=MYISAM
 ;
@@ -241,11 +241,10 @@ CREATE TABLE Marcas_productos(
 --
 
 CREATE TABLE Ordenes_de_pago_clientes(
-    id               DECIMAL(10, 0)    NOT NULL,
-    factura_id       DECIMAL(10, 0)    NOT NULL,
-    fecha_de_pago    DATE              NOT NULL,
-    pc_id            DECIMAL(10, 0)    NOT NULL,
-    importe          DECIMAL(10, 0)    NOT NULL,
+    id            DECIMAL(10, 0)    NOT NULL,
+    factura_id    DECIMAL(10, 0)    NOT NULL,
+    pc_id         DECIMAL(10, 0)    NOT NULL,
+    importe       DECIMAL(10, 0)    NOT NULL,
     PRIMARY KEY (id)
 )ENGINE=MYISAM
 ;
@@ -257,11 +256,10 @@ CREATE TABLE Ordenes_de_pago_clientes(
 --
 
 CREATE TABLE Ordenes_de_pago_proveedores(
-    id               DECIMAL(10, 0)    NOT NULL,
-    importe          DECIMAL(10, 0)    NOT NULL,
-    factura_id       DECIMAL(10, 0)    NOT NULL,
-    fecha_de_pago    DATE              NOT NULL,
-    pp_id            DECIMAL(10, 0)    NOT NULL,
+    id            DECIMAL(10, 0)    NOT NULL,
+    importe       DECIMAL(10, 0)    NOT NULL,
+    factura_id    DECIMAL(10, 0)    NOT NULL,
+    pp_id         DECIMAL(10, 0)    NOT NULL,
     PRIMARY KEY (id)
 )ENGINE=MYISAM
 ;
@@ -274,9 +272,9 @@ CREATE TABLE Ordenes_de_pago_proveedores(
 
 CREATE TABLE Pago_cliente(
     id             DECIMAL(10, 0)    NOT NULL,
-    fecha          DATE              NOT NULL,
-    observacion    CHAR(10),
     cliente        DECIMAL(10, 0)    NOT NULL,
+    fecha          DATE              NOT NULL,
+    observacion    VARCHAR(100),
     PRIMARY KEY (id)
 )ENGINE=MYISAM
 ;
@@ -289,8 +287,9 @@ CREATE TABLE Pago_cliente(
 
 CREATE TABLE pago_proveedor(
     id             DECIMAL(10, 0)    NOT NULL,
+    proveedor      DECIMAL(10, 0)    NOT NULL,
     fecha          DATE              NOT NULL,
-    Observacion    VARCHAR(10),
+    Observacion    VARCHAR(100),
     PRIMARY KEY (id)
 )ENGINE=MYISAM
 ;
@@ -303,12 +302,12 @@ CREATE TABLE pago_proveedor(
 
 CREATE TABLE Productos(
     id                 DECIMAL(10, 0)    NOT NULL,
+    codigo_de_barra    DECIMAL(13, 0)    NOT NULL,
     marca              DECIMAL(10, 0),
     linea              DECIMAL(10, 0)    NOT NULL,
-    codigo_de_barra    DECIMAL(13, 0)    NOT NULL,
-    descripcion        VARCHAR(100),
-    costo_unitario     DECIMAL(10, 0)    NOT NULL,
     iva_impuesto       DECIMAL(2, 0)     NOT NULL,
+    costo_unitario     DECIMAL(10, 0)    NOT NULL,
+    descripcion        VARCHAR(100),
     PRIMARY KEY (id)
 )ENGINE=MYISAM
 ;
@@ -323,11 +322,11 @@ CREATE TABLE Proveedores(
     id           DECIMAL(10, 0)    NOT NULL,
     nombre       VARCHAR(100)      NOT NULL,
     direccion    DECIMAL(10, 0),
+    categoria    DECIMAL(1, 0),
     telefono     VARCHAR(100)      NOT NULL,
     contacto     VARCHAR(100)      NOT NULL,
     mail         VARCHAR(100)      NOT NULL,
     saldo        DECIMAL(10, 0)    NOT NULL,
-    categoria    DECIMAL(1, 0),
     PRIMARY KEY (id)
 )ENGINE=MYISAM
 ;
@@ -404,10 +403,10 @@ CREATE TABLE Venta_detalles(
 CREATE TABLE Venta_facturas(
     id                   DECIMAL(10, 0)    NOT NULL,
     cliente              DECIMAL(10, 0)    NOT NULL,
+    deposito_egreso      DECIMAL(10, 0),
+    condicion            DECIMAL(1, 0),
     fecha_emision        DATE              NOT NULL,
     fecha_vencimiento    DATE              NOT NULL,
-    condicion            DECIMAL(1, 0),
-    deposito_egreso      DECIMAL(10, 0),
     PRIMARY KEY (id)
 )ENGINE=MYISAM
 ;
@@ -415,17 +414,257 @@ CREATE TABLE Venta_facturas(
 
 
 -- 
--- TABLE: Clientes 
+-- INDEX: Ref2553 
 --
 
-ALTER TABLE Clientes ADD CONSTRAINT RefCategorias2 
-    FOREIGN KEY (categoria)
-    REFERENCES Categorias(id)
+CREATE INDEX Ref2553 ON Clientes(direccion)
 ;
+-- 
+-- INDEX: Ref52 
+--
+
+CREATE INDEX Ref52 ON Clientes(categoria)
+;
+-- 
+-- INDEX: Ref838 
+--
+
+CREATE INDEX Ref838 ON Compra_detalles(compra_id)
+;
+-- 
+-- INDEX: Ref166 
+--
+
+CREATE INDEX Ref166 ON Compra_detalles(producto_id)
+;
+-- 
+-- INDEX: Ref94 
+--
+
+CREATE INDEX Ref94 ON Compra_facturas(proveedor)
+;
+-- 
+-- INDEX: Ref45 
+--
+
+CREATE INDEX Ref45 ON Compra_facturas(condicion)
+;
+-- 
+-- INDEX: Ref77 
+--
+
+CREATE INDEX Ref77 ON Compra_facturas(deposito_ingreso)
+;
+-- 
+-- INDEX: Ref2551 
+--
+
+CREATE INDEX Ref2551 ON Depositos(direccion)
+;
+-- 
+-- INDEX: Ref3073 
+--
+
+CREATE INDEX Ref3073 ON Detalles_orden_de_pago_clientes(orden_pago_id)
+;
+-- 
+-- INDEX: Ref3278 
+--
+
+CREATE INDEX Ref3278 ON Detalles_orden_de_pago_clientes(pc_id)
+;
+-- 
+-- INDEX: Ref2345 
+--
+
+CREATE INDEX Ref2345 ON Detalles_orden_de_pago_proveedores(orden_pago_id)
+;
+-- 
+-- INDEX: Ref3381 
+--
+
+CREATE INDEX Ref3381 ON Detalles_orden_de_pago_proveedores(pp_id)
+;
+-- 
+-- INDEX: Ref2647 
+--
+
+CREATE INDEX Ref2647 ON Direcciones(calle_principal)
+;
+-- 
+-- INDEX: Ref2648 
+--
+
+CREATE INDEX Ref2648 ON Direcciones(calle1)
+;
+-- 
+-- INDEX: Ref2649 
+--
+
+CREATE INDEX Ref2649 ON Direcciones(calle2)
+;
+-- 
+-- INDEX: Ref2552 
+--
+
+CREATE INDEX Ref2552 ON Empleados(direccion)
+;
+-- 
+-- INDEX: Ref170 
+--
+
+CREATE INDEX Ref170 ON Lista_precios(producto_id)
+;
+-- 
+-- INDEX: Ref1174 
+--
+
+CREATE INDEX Ref1174 ON Ordenes_de_pago_clientes(factura_id)
+;
+-- 
+-- INDEX: Ref3277 
+--
+
+CREATE INDEX Ref3277 ON Ordenes_de_pago_clientes(pc_id)
+;
+-- 
+-- INDEX: Ref844 
+--
+
+CREATE INDEX Ref844 ON Ordenes_de_pago_proveedores(factura_id)
+;
+-- 
+-- INDEX: Ref3380 
+--
+
+CREATE INDEX Ref3380 ON Ordenes_de_pago_proveedores(pp_id)
+;
+-- 
+-- INDEX: Ref375 
+--
+
+CREATE INDEX Ref375 ON Pago_cliente(cliente)
+;
+-- 
+-- INDEX: Ref982 
+--
+
+CREATE INDEX Ref982 ON pago_proveedor(proveedor)
+;
+-- 
+-- INDEX: Ref1831 
+--
+
+CREATE INDEX Ref1831 ON Productos(linea)
+;
+-- 
+-- INDEX: Ref1932 
+--
+
+CREATE INDEX Ref1932 ON Productos(marca)
+;
+-- 
+-- INDEX: Ref263 
+--
+
+CREATE INDEX Ref263 ON Productos(iva_impuesto)
+;
+-- 
+-- INDEX: Ref2550 
+--
+
+CREATE INDEX Ref2550 ON Proveedores(direccion)
+;
+-- 
+-- INDEX: Ref53 
+--
+
+CREATE INDEX Ref53 ON Proveedores(categoria)
+;
+-- 
+-- INDEX: Ref767 
+--
+
+CREATE INDEX Ref767 ON Stocks(depositos_id)
+;
+-- 
+-- INDEX: Ref168 
+--
+
+CREATE INDEX Ref168 ON Stocks(producto_id)
+;
+-- 
+-- INDEX: Ref1741 
+--
+
+CREATE INDEX Ref1741 ON Transferencia_detalles(transferencia_id)
+;
+-- 
+-- INDEX: Ref169 
+--
+
+CREATE INDEX Ref169 ON Transferencia_detalles(producto_id)
+;
+-- 
+-- INDEX: Ref1026 
+--
+
+CREATE INDEX Ref1026 ON Transferencias(autorizado_empleado)
+;
+-- 
+-- INDEX: Ref727 
+--
+
+CREATE INDEX Ref727 ON Transferencias(deposito_origen)
+;
+-- 
+-- INDEX: Ref728 
+--
+
+CREATE INDEX Ref728 ON Transferencias(deposito_destino)
+;
+-- 
+-- INDEX: Ref1139 
+--
+
+CREATE INDEX Ref1139 ON Venta_detalles(venta_id)
+;
+-- 
+-- INDEX: Ref171 
+--
+
+CREATE INDEX Ref171 ON Venta_detalles(producto_id)
+;
+-- 
+-- INDEX: Ref312 
+--
+
+CREATE INDEX Ref312 ON Venta_facturas(cliente)
+;
+-- 
+-- INDEX: Ref714 
+--
+
+CREATE INDEX Ref714 ON Venta_facturas(deposito_egreso)
+;
+-- 
+-- INDEX: Ref417 
+--
+
+CREATE INDEX Ref417 ON Venta_facturas(condicion)
+;
+-- 
+-- TABLE: Clientes 
+--
 
 ALTER TABLE Clientes ADD CONSTRAINT RefDirecciones53 
     FOREIGN KEY (direccion)
     REFERENCES Direcciones(id)
+;
+
+ALTER TABLE Clientes ADD CONSTRAINT RefCategorias2 
+    FOREIGN KEY (categoria)
+    REFERENCES Categorias(id)
 ;
 
 
@@ -433,14 +672,14 @@ ALTER TABLE Clientes ADD CONSTRAINT RefDirecciones53
 -- TABLE: Compra_detalles 
 --
 
-ALTER TABLE Compra_detalles ADD CONSTRAINT RefProductos66 
-    FOREIGN KEY (producto_id)
-    REFERENCES Productos(id)
-;
-
 ALTER TABLE Compra_detalles ADD CONSTRAINT RefCompra_facturas38 
     FOREIGN KEY (compra_id)
     REFERENCES Compra_facturas(id)
+;
+
+ALTER TABLE Compra_detalles ADD CONSTRAINT RefProductos66 
+    FOREIGN KEY (producto_id)
+    REFERENCES Productos(id)
 ;
 
 
@@ -585,13 +824,18 @@ ALTER TABLE Pago_cliente ADD CONSTRAINT RefClientes75
 
 
 -- 
--- TABLE: Productos 
+-- TABLE: pago_proveedor 
 --
 
-ALTER TABLE Productos ADD CONSTRAINT RefImpuestos63 
-    FOREIGN KEY (iva_impuesto)
-    REFERENCES Impuestos(id)
+ALTER TABLE pago_proveedor ADD CONSTRAINT RefProveedores82 
+    FOREIGN KEY (proveedor)
+    REFERENCES Proveedores(id)
 ;
+
+
+-- 
+-- TABLE: Productos 
+--
 
 ALTER TABLE Productos ADD CONSTRAINT RefLineas_productos31 
     FOREIGN KEY (linea)
@@ -603,19 +847,24 @@ ALTER TABLE Productos ADD CONSTRAINT RefMarcas_productos32
     REFERENCES Marcas_productos(id)
 ;
 
+ALTER TABLE Productos ADD CONSTRAINT RefImpuestos63 
+    FOREIGN KEY (iva_impuesto)
+    REFERENCES Impuestos(id)
+;
+
 
 -- 
 -- TABLE: Proveedores 
 --
 
-ALTER TABLE Proveedores ADD CONSTRAINT RefCategorias3 
-    FOREIGN KEY (categoria)
-    REFERENCES Categorias(id)
-;
-
 ALTER TABLE Proveedores ADD CONSTRAINT RefDirecciones50 
     FOREIGN KEY (direccion)
     REFERENCES Direcciones(id)
+;
+
+ALTER TABLE Proveedores ADD CONSTRAINT RefCategorias3 
+    FOREIGN KEY (categoria)
+    REFERENCES Categorias(id)
 ;
 
 
@@ -638,14 +887,14 @@ ALTER TABLE Stocks ADD CONSTRAINT RefProductos68
 -- TABLE: Transferencia_detalles 
 --
 
-ALTER TABLE Transferencia_detalles ADD CONSTRAINT RefProductos69 
-    FOREIGN KEY (producto_id)
-    REFERENCES Productos(id)
-;
-
 ALTER TABLE Transferencia_detalles ADD CONSTRAINT RefTransferencias41 
     FOREIGN KEY (transferencia_id)
     REFERENCES Transferencias(id)
+;
+
+ALTER TABLE Transferencia_detalles ADD CONSTRAINT RefProductos69 
+    FOREIGN KEY (producto_id)
+    REFERENCES Productos(id)
 ;
 
 
@@ -673,14 +922,14 @@ ALTER TABLE Transferencias ADD CONSTRAINT RefDepositos28
 -- TABLE: Venta_detalles 
 --
 
-ALTER TABLE Venta_detalles ADD CONSTRAINT RefProductos71 
-    FOREIGN KEY (producto_id)
-    REFERENCES Productos(id)
-;
-
 ALTER TABLE Venta_detalles ADD CONSTRAINT RefVenta_facturas39 
     FOREIGN KEY (venta_id)
     REFERENCES Venta_facturas(id)
+;
+
+ALTER TABLE Venta_detalles ADD CONSTRAINT RefProductos71 
+    FOREIGN KEY (producto_id)
+    REFERENCES Productos(id)
 ;
 
 
@@ -704,67 +953,3 @@ ALTER TABLE Venta_facturas ADD CONSTRAINT RefCondiciones17
 ;
 
 
-insert into Calles(id,nombre) values
-	(1, 'Mcal Estigarribia'),
-	(2, 'Juan Leon Mayorquin'),
-	(3, 'Carlos Antonio Lopez'),
-	(4, 'Cerro Cora'),
-	(5, '14 de mayo'),
-	(6, 'Tomas Romero Pereira');
-
-insert into Direcciones(id,numero,calle_principal,calle1,calle2) values
-	(1, 110, 1,2,3),
-	(2, 120, 1,3,4),
-	(3, 150, 2,3,4),
-	(4, 170, 3,4,5),
-	(5, 190, 4,5,6),
-	(6, 210, 1,5,6);
-
-insert into Clientes(id,nombre,direccion,telefono,contacto,mail,saldo,categoria) values
-	(1,'Juan Petta',1,'200305','Juan Petta','juan@uni.edu.py',0,1),
-	(2,'Cesar Ibarrola',2,'200306','Cesar Ibarrola','cesar@uni.edu.py',0,1),
-	(3,'Petrosur',3,'200307','Marian Aranda','marian@uni.edu.py',0,1),
-	(4,'Rocio Otazu',4,'200308','Rocio Otazu','roco@uni.edu.py',1000000,2),
-	(5,'Liz Garcia',5,'200308','Liz Garcia','liz@uni.edu.py',1000000,2),
-	(6,'Marcos Ledezma',6,'200310','Marcos Ledezma','marcos@uni.edu.py',1000000,2);
-
-insert into Marcas_productos(id,nombre) values
-	(1,'Tramontina'),
-	(2,'Brisa'),
-	(3,'Impaco'),
-	(4,'Tigre'),
-	(5,'Leon'),
-	(6,'Fore');
-
-insert into Lineas_productos(id,descripcion,nombre) values
-	(1,'4 mm', 'cable'),
-	(2,'macho','toma corriente'),
-	(3,'2 mtrs. bronce','jabalina'),
-	(4,'3/4','canho corrugado'),
-	(5,'negro, marron y blanco','porta foco'),
-	(6,'100 w','foco');
-
-insert into Impuestos(id,nombre,porcentaje) values
-	(1,'IVA 0%',0),
-	(2,'IVA 5%',5),
-	(3,'IVA 10%',10);
-
-insert into Categorias(id,nombre,linea_credito) values
-	(1,'minorista',2000000),
-	(2,'mayorista',10000000);
-
-insert into Productos(id,marca,linea,codigo_de_barra,descripcion,costo_unitario,iva_impuesto) values
-	(1,1,1,254678559,'4 mm',800,2),
-	(2,2,2,145758895,'macho',300,3),
-	(3,3,3,558799486,'1 mtr.',400,1),
-	(4,4,4,587945784,'3/4',1000,2),
-	(5,5,4,784595227,'blanco',1500,1),
-	(6,6,6,214557845,'60 w',1000,3);
-
-insert into Empleados(id,nombre,direccion,telefono,mail) values
-	(1,'Juan Petta',1,'200305','juan@uni.edu.py'),
-	(2,'Cesar Ibarrola',2,'200306','cesar@uni.edu.py'),
-	(3,'Petrosur',3,'200307','marian@uni.edu.py'),
-	(4,'Rocio Otazu',4,'200308','roco@uni.edu.py'),
-	(5,'Liz Garcia',5,'200308','liz@uni.edu.py'),
-	(6,'Marcos Ledezma',6,'200310','marcos@uni.edu.py');

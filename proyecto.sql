@@ -678,6 +678,11 @@ insert into Lineas_productos(id,descripcion,nombre) values
 	(5,'negro, marron y blanco','porta foco'),
 	(6,'100 w','foco');
 
+insert into Impuestos(id,nombre,porcentaje) values
+	(1,'IVA 0%',0),
+	(2,'IVA 5%',5),
+	(3,'IVA 10%',10);
 
-
-
+insert into Categorias(id,nombre,linea_credito) values
+	(1,'minorista',2000000),
+	(2,'mayorista',10000000);

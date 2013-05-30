@@ -17,6 +17,7 @@ DELIMITER ;
 -- 		VALUES (1,1,1,NOW(),NOW());
 -- CALL generar_factura_de_venta(1,1,1,NOW(),NOW());
 -- SELECT * FROM Venta_facturas;
+-- tamara
 
 DROP PROCEDURE IF EXISTS p_agregar_detalles_factura_de_venta;
 DELIMITER | 

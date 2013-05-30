@@ -163,7 +163,7 @@ insert into Pago_cliente(id,fecha,observacion,cliente) values
 	(5,'13-05-24','pago atrasado',5),
 	(6,'13-06-01','pago atrasado',6);
 
-insert into ordenes_de_pago_clientes(id,factura_id,pc_id,importe) values
+insert into Ordenes_de_pago_clientes(id,factura_id,pc_id,importe) values
 	(1,1,1,100000),
 	(2,2,2,50000),
 	(3,3,3,10000),
@@ -171,7 +171,7 @@ insert into ordenes_de_pago_clientes(id,factura_id,pc_id,importe) values
 	(5,5,5,40000),
 	(6,6,6,10000);
 
-insert into detalles_orden_de_pago_clientes(id,orden_pago_id,importe,forma_de_pago,pc_id) values
+insert into Detalles_orden_de_pago_clientes(id,orden_pago_id,importe,forma_de_pago,pc_id) values
 	(1,1,100000,'contado',1),
 	(2,2,50000,'credito',2),
 	(3,3,10000,'credito',3),
@@ -179,7 +179,7 @@ insert into detalles_orden_de_pago_clientes(id,orden_pago_id,importe,forma_de_pa
 	(5,5,40000,'contado',5),
 	(6,6,10000,'contado',6);
 
-insert into pago_proveedor(id,proveedor,fecha, observacion) value
+insert into Pago_proveedor(id,proveedor,fecha, observacion) value
 	(1,1,'13-05-12','Pago atrasado'),
 	(2,2,'13-05-10','Pago atrasado'),
 	(3,3,'13-05-09','Pago atrasado'),

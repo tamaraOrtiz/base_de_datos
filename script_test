@@ -1,0 +1,6 @@
+use proyectodb;
+select * from Venta_detalles;
+select * from Venta_facturas;
+select * from Lista_precios;
+insert into Venta_detalles values
+	(8,1,1,20000,4,0,20000);

@@ -59,3 +59,27 @@ DELIMITER ;
 
 INSERT INTO Venta_detalles(venta_id,producto_id,precio_unitario,cantidad,iva,saldo)
 		VALUES(1,1,4000,1000,1,20000);
+
+
+m
+m
+mm
+m
+m
+m
+
+m
+m
+m
+m
+m
+m
+
+mm
+
+m
+m
+m
+m
+m
+m

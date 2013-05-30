@@ -4,20 +4,19 @@
 -- Project :      basededatos.dm1
 -- Author :       Microsoft
 --
--- Date Created : Thursday, May 23, 2013 16:03:57
+-- Date Created : Thursday, May 30, 2013 18:01:32
 -- Target DBMS : MySQL 5.x
 --
 
 -- 
 -- TABLE: Calles 
 --
-
 DROP DATABASE IF EXISTS  proyectodb;
 CREATE DATABASE proyectodb;
 USE proyectodb;
 CREATE TABLE Calles(
-    id        INTEGER  NOT NULL AUTO_INCREMENT ,
-    nombre    VARCHAR(100)      NOT NULL,
+    id        INT             AUTO_INCREMENT,
+    nombre    VARCHAR(100)    NOT NULL,
     PRIMARY KEY (id)
 )ENGINE=MYISAM
 ;
@@ -29,7 +28,7 @@ CREATE TABLE Calles(
 --
 
 CREATE TABLE Categorias(
-    id        INTEGER     NOT NULL AUTO_INCREMENT,
+    id               INT               AUTO_INCREMENT,
     nombre           VARCHAR(100)      NOT NULL,
     linea_credito    DECIMAL(10, 0)    NOT NULL,
     PRIMARY KEY (id)
@@ -43,10 +42,10 @@ CREATE TABLE Categorias(
 --
 
 CREATE TABLE Clientes(
-    id        INTEGER    NOT NULL AUTO_INCREMENT,
-    direccion    DECIMAL(10, 0),
+    id           INT               AUTO_INCREMENT,
+    direccion    INT,
     nombre       VARCHAR(100)      NOT NULL,
-    categoria    DECIMAL(1, 0)     NOT NULL,
+    categoria    INT               NOT NULL,
     telefono     VARCHAR(100)      NOT NULL,
     contacto     VARCHAR(100)      NOT NULL,
     mail         VARCHAR(100)      NOT NULL,
@@ -62,9 +61,9 @@ CREATE TABLE Clientes(
 --
 
 CREATE TABLE Compra_detalles(
-    id        INTEGER    NOT NULL AUTO_INCREMENT,
-    compra_id         DECIMAL(10, 0)    NOT NULL,
-    producto_id       DECIMAL(10, 0)    NOT NULL,
+    id                INT               AUTO_INCREMENT,
+    compra_id         INT               NOT NULL,
+    producto_id       INT               NOT NULL,
     costo_unitario    DECIMAL(10, 0)    NOT NULL,
     cantidad          DECIMAL(10, 0)    NOT NULL,
     iva               DECIMAL(2, 0)     NOT NULL,
@@ -79,10 +78,10 @@ CREATE TABLE Compra_detalles(
 --
 
 CREATE TABLE Compra_facturas(
-    id        INTEGER    NOT NULL AUTO_INCREMENT,
-    proveedor            DECIMAL(10, 0)    NOT NULL,
-    deposito_ingreso     DECIMAL(10, 0)    NOT NULL,
-    condicion            DECIMAL(1, 0)     NOT NULL,
+    id                   INT               AUTO_INCREMENT,
+    proveedor            INT               NOT NULL,
+    deposito_ingreso     INT               NOT NULL,
+    condicion            INT               NOT NULL,
     fecha_emision        DATE              NOT NULL,
     fecha_vencimiento    DATE              NOT NULL,
     saldo                DECIMAL(10, 0)    NOT NULL,
@@ -97,8 +96,8 @@ CREATE TABLE Compra_facturas(
 --
 
 CREATE TABLE Condiciones(
-    id        INTEGER    NOT NULL AUTO_INCREMENT,
-    nombre    VARCHAR(100)     NOT NULL,
+    id        INT             AUTO_INCREMENT,
+    nombre    VARCHAR(100)    NOT NULL,
     PRIMARY KEY (id)
 )ENGINE=MYISAM
 ;
@@ -110,9 +109,9 @@ CREATE TABLE Condiciones(
 --
 
 CREATE TABLE Depositos(
-    id        INTEGER    NOT NULL AUTO_INCREMENT,
-    direccion    DECIMAL(10, 0),
-    nombre       VARCHAR(100)      NOT NULL,
+    id           INT             NOT NULL,
+    direccion    INT,
+    nombre       VARCHAR(100)    NOT NULL,
     PRIMARY KEY (id)
 )ENGINE=MYISAM
 ;
@@ -124,9 +123,9 @@ CREATE TABLE Depositos(
 --
 
 CREATE TABLE Detalles_orden_de_pago_clientes(
-    id        INTEGER    NOT NULL AUTO_INCREMENT,
-    pc_id            DECIMAL(10, 0)    NOT NULL,
-    orden_pago_id    DECIMAL(10, 0)    NOT NULL,
+    id               INT               AUTO_INCREMENT,
+    pc_id            INT               NOT NULL,
+    orden_pago_id    INT               NOT NULL,
     importe          DECIMAL(10, 0)    NOT NULL,
     forma_de_pago    VARCHAR(100)      NOT NULL,
     PRIMARY KEY (id, pc_id)
@@ -140,9 +139,9 @@ CREATE TABLE Detalles_orden_de_pago_clientes(
 --
 
 CREATE TABLE Detalles_orden_de_pago_proveedores(
-    id        INTEGER    NOT NULL AUTO_INCREMENT,
-    pp_id            DECIMAL(10, 0)    NOT NULL,
-    orden_pago_id    DECIMAL(10, 0)    NOT NULL,
+    id               INT               AUTO_INCREMENT,
+    pp_id            INT               NOT NULL,
+    orden_pago_id    INT               NOT NULL,
     importe          DECIMAL(10, 0)    NOT NULL,
     forma_de_pago    VARCHAR(100)      NOT NULL,
     PRIMARY KEY (id, pp_id)
@@ -156,10 +155,10 @@ CREATE TABLE Detalles_orden_de_pago_proveedores(
 --
 
 CREATE TABLE Direcciones(
-    id        INTEGER    NOT NULL AUTO_INCREMENT,
-    calle_principal    DECIMAL(10, 0)    NOT NULL,
-    calle1             DECIMAL(10, 0)    NOT NULL,
-    calle2             DECIMAL(10, 0)    NOT NULL,
+    id                 INT               AUTO_INCREMENT,
+    calle_principal    INT               NOT NULL,
+    calle1             INT               NOT NULL,
+    calle2             INT               NOT NULL,
     numero             DECIMAL(10, 0),
     PRIMARY KEY (id)
 )ENGINE=MYISAM
@@ -172,11 +171,11 @@ CREATE TABLE Direcciones(
 --
 
 CREATE TABLE Empleados(
-    id        INTEGER    NOT NULL AUTO_INCREMENT,
-    nombre       VARCHAR(100)      NOT NULL,
-    direccion    DECIMAL(10, 0),
-    telefono     VARCHAR(100)      NOT NULL,
-    mail         VARCHAR(100)      NOT NULL,
+    id           INT             AUTO_INCREMENT,
+    nombre       VARCHAR(100)    NOT NULL,
+    direccion    INT,
+    telefono     VARCHAR(100)    NOT NULL,
+    mail         VARCHAR(100)    NOT NULL,
     PRIMARY KEY (id)
 )ENGINE=MYISAM
 ;
@@ -188,7 +187,7 @@ CREATE TABLE Empleados(
 --
 
 CREATE TABLE Impuestos(
-id        INTEGER    NOT NULL AUTO_INCREMENT,
+    id            INT              AUTO_INCREMENT,
     nombre        VARCHAR(100)     NOT NULL,
     porcentaje    DECIMAL(5, 2)    NOT NULL,
     PRIMARY KEY (id)
@@ -202,8 +201,8 @@ id        INTEGER    NOT NULL AUTO_INCREMENT,
 --
 
 CREATE TABLE Lineas_productos(
-    id        INTEGER    NOT NULL AUTO_INCREMENT,
-    nombre         VARCHAR(100)      NOT NULL,
+    id             INT             AUTO_INCREMENT,
+    nombre         VARCHAR(100)    NOT NULL,
     descripcion    VARCHAR(100),
     PRIMARY KEY (id)
 )ENGINE=MYISAM
@@ -216,8 +215,8 @@ CREATE TABLE Lineas_productos(
 --
 
 CREATE TABLE Lista_precios(
-    id        INTEGER    NOT NULL AUTO_INCREMENT,
-    producto_id          DECIMAL(10, 0)    NOT NULL,
+    id                   INT               AUTO_INCREMENT,
+    producto_id          INT               NOT NULL,
     precio               DECIMAL(10, 0)    NOT NULL,
     fecha_actualizada    DATE              NOT NULL,
     PRIMARY KEY (id)
@@ -231,8 +230,8 @@ CREATE TABLE Lista_precios(
 --
 
 CREATE TABLE Marcas_productos(
-    id        INTEGER    NOT NULL AUTO_INCREMENT,
-    nombre    VARCHAR(100)      NOT NULL,
+    id        INT             AUTO_INCREMENT,
+    nombre    VARCHAR(100)    NOT NULL,
     PRIMARY KEY (id)
 )ENGINE=MYISAM
 ;
@@ -244,9 +243,9 @@ CREATE TABLE Marcas_productos(
 --
 
 CREATE TABLE Ordenes_de_pago_clientes(
-    id        INTEGER    NOT NULL AUTO_INCREMENT,
-    pc_id         DECIMAL(10, 0)    NOT NULL,
-    factura_id    DECIMAL(10, 0)    NOT NULL,
+    id            INT               AUTO_INCREMENT,
+    pc_id         INT               NOT NULL,
+    factura_id    INT               NOT NULL,
     importe       DECIMAL(10, 0)    NOT NULL,
     PRIMARY KEY (id, pc_id)
 )ENGINE=MYISAM
@@ -259,10 +258,10 @@ CREATE TABLE Ordenes_de_pago_clientes(
 --
 
 CREATE TABLE Ordenes_de_pago_proveedores(
-    id        INTEGER    NOT NULL AUTO_INCREMENT,
-    pp_id         DECIMAL(10, 0)    NOT NULL,
+    id            INT               AUTO_INCREMENT,
+    pp_id         INT               NOT NULL,
     importe       DECIMAL(10, 0)    NOT NULL,
-    factura_id    DECIMAL(10, 0)    NOT NULL,
+    factura_id    INT               NOT NULL,
     PRIMARY KEY (id, pp_id)
 )ENGINE=MYISAM
 ;
@@ -274,9 +273,9 @@ CREATE TABLE Ordenes_de_pago_proveedores(
 --
 
 CREATE TABLE Pago_cliente(
-    id        INTEGER    NOT NULL AUTO_INCREMENT,
-    cliente        DECIMAL(10, 0)    NOT NULL,
-    fecha          DATE              NOT NULL,
+    id             INT             AUTO_INCREMENT,
+    cliente        INT             NOT NULL,
+    fecha          DATE            NOT NULL,
     observacion    VARCHAR(100),
     PRIMARY KEY (id)
 )ENGINE=MYISAM
@@ -288,10 +287,10 @@ CREATE TABLE Pago_cliente(
 -- TABLE: pago_proveedor 
 --
 
-CREATE TABLE Pago_proveedor(
-   id        INTEGER    NOT NULL AUTO_INCREMENT,
-    proveedor      DECIMAL(10, 0)    NOT NULL,
-    fecha          DATE              NOT NULL,
+CREATE TABLE pago_proveedor(
+    id             INT             AUTO_INCREMENT,
+    proveedor      INT             NOT NULL,
+    fecha          DATE            NOT NULL,
     Observacion    VARCHAR(100),
     PRIMARY KEY (id)
 )ENGINE=MYISAM
@@ -304,11 +303,11 @@ CREATE TABLE Pago_proveedor(
 --
 
 CREATE TABLE Productos(
-    id        INTEGER    NOT NULL AUTO_INCREMENT,
+    id                 INT               AUTO_INCREMENT,
     codigo_de_barra    DECIMAL(13, 0)    NOT NULL,
-    marca              DECIMAL(10, 0),
-    linea              DECIMAL(10, 0)    NOT NULL,
-    iva_impuesto       DECIMAL(2, 0)     NOT NULL,
+    marca              INT,
+    linea              INT               NOT NULL,
+    iva_impuesto       INT               NOT NULL,
     costo_unitario     DECIMAL(10, 0)    NOT NULL,
     descripcion        VARCHAR(100),
     PRIMARY KEY (id)
@@ -322,10 +321,10 @@ CREATE TABLE Productos(
 --
 
 CREATE TABLE Proveedores(
-    id        INTEGER    NOT NULL AUTO_INCREMENT,
+    id           INT               AUTO_INCREMENT,
     nombre       VARCHAR(100)      NOT NULL,
-    direccion    DECIMAL(10, 0),
-    categoria    DECIMAL(1, 0),
+    direccion    INT,
+    categoria    INT,
     telefono     VARCHAR(100)      NOT NULL,
     contacto     VARCHAR(100)      NOT NULL,
     mail         VARCHAR(100)      NOT NULL,
@@ -341,8 +340,8 @@ CREATE TABLE Proveedores(
 --
 
 CREATE TABLE Stocks(
-    producto_id     DECIMAL(10, 0)    NOT NULL,
-    depositos_id    DECIMAL(10, 0)    NOT NULL,
+    producto_id     INT               NOT NULL,
+    depositos_id    INT               NOT NULL,
     cantidad        DECIMAL(10, 0)    NOT NULL,
     PRIMARY KEY (producto_id, depositos_id)
 )ENGINE=MYISAM
@@ -355,9 +354,9 @@ CREATE TABLE Stocks(
 --
 
 CREATE TABLE Transferencia_detalles(
-    id        INTEGER    NOT NULL AUTO_INCREMENT,
-    transferencia_id    DECIMAL(10, 0)    NOT NULL,
-    producto_id         DECIMAL(10, 0)    NOT NULL,
+    id                  INT               AUTO_INCREMENT,
+    transferencia_id    INT               NOT NULL,
+    producto_id         INT               NOT NULL,
     cantidad            DECIMAL(10, 0)    NOT NULL,
     PRIMARY KEY (id, transferencia_id)
 )ENGINE=MYISAM
@@ -370,11 +369,11 @@ CREATE TABLE Transferencia_detalles(
 --
 
 CREATE TABLE Transferencias(
-    id        INTEGER    NOT NULL AUTO_INCREMENT,
-    encargado_traslado     VARCHAR(100)      NOT NULL,
-    autorizado_empleado    DECIMAL(10, 0),
-    deposito_origen        DECIMAL(10, 0),
-    deposito_destino       DECIMAL(10, 0),
+    id                     INT             AUTO_INCREMENT,
+    encargado_traslado     VARCHAR(100)    NOT NULL,
+    autorizado_empleado    INT,
+    deposito_origen        INT,
+    deposito_destino       INT,
     PRIMARY KEY (id)
 )ENGINE=MYISAM
 ;
@@ -386,9 +385,9 @@ CREATE TABLE Transferencias(
 --
 
 CREATE TABLE Venta_detalles(
-    id        INTEGER    NOT NULL AUTO_INCREMENT,
-    venta_id           DECIMAL(10, 0)    NOT NULL,
-    producto_id        DECIMAL(10, 0)    NOT NULL,
+    id                 INT               AUTO_INCREMENT,
+    venta_id           INT               NOT NULL,
+    producto_id        INT               NOT NULL,
     precio_unitario    DECIMAL(10, 0)    NOT NULL,
     cantidad           DECIMAL(6, 0)     NOT NULL,
     iva                DECIMAL(2, 0)     NOT NULL,
@@ -404,12 +403,12 @@ CREATE TABLE Venta_detalles(
 --
 
 CREATE TABLE Venta_facturas(
-    id        INTEGER    NOT NULL AUTO_INCREMENT,
-    cliente              DECIMAL(10, 0)    NOT NULL,
-    deposito_egreso      DECIMAL(10, 0),
-    condicion            DECIMAL(1, 0),
-    fecha_emision        DATE              NOT NULL,
-    fecha_vencimiento    DATE              NOT NULL,
+    id                   INT     AUTO_INCREMENT,
+    cliente              INT     NOT NULL,
+    deposito_egreso      INT,
+    condicion            INT,
+    fecha_emision        DATE    NOT NULL,
+    fecha_vencimiento    DATE    NOT NULL,
     PRIMARY KEY (id)
 )ENGINE=MYISAM
 ;
@@ -552,7 +551,7 @@ CREATE INDEX Ref375 ON Pago_cliente(cliente)
 -- INDEX: Ref982 
 --
 
-CREATE INDEX Ref982 ON Pago_proveedor(proveedor)
+CREATE INDEX Ref982 ON pago_proveedor(proveedor)
 ;
 -- 
 -- INDEX: Ref1831 
@@ -830,7 +829,7 @@ ALTER TABLE Pago_cliente ADD CONSTRAINT RefClientes75
 -- TABLE: pago_proveedor 
 --
 
-ALTER TABLE Pago_proveedor ADD CONSTRAINT RefProveedores82 
+ALTER TABLE pago_proveedor ADD CONSTRAINT RefProveedores82 
     FOREIGN KEY (proveedor)
     REFERENCES Proveedores(id)
 ;

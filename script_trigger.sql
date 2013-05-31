@@ -43,7 +43,7 @@ BEGIN
 END | 
 DELIMITER ;
 --
--- call agregar_detalles_factura_de_venta(1,200,1500800);
+-- call p_agregar_detalles_factura_de_venta(1,20,15000);
 -- select * from Venta_detalles;
 -- 
 
@@ -57,50 +57,49 @@ BEGIN
 END | 
 DELIMITER ;
 
-INSERT INTO Venta_detalles(venta_id,producto_id,precio_unitario,cantidad,iva,saldo)
-		VALUES(1,1,4000,1000,1,20000);
+-- INSERT INTO Venta_detalles(venta_id,producto_id,precio_unitario,cantidad,iva,saldo)
+-- VALUES(1,1,4000,1000,1,20000);
+
+DROP PROCEDURE IF EXISTS p_generar_transferencia;
+DELIMITER | 
+CREATE PROCEDURE p_generar_transferencia(encargado_traslado VARCHAR(100), autorizado_empleado_id INT, deposito_origen_id INT, deposito_destino_id INT)
+BEGIN
+	INSERT INTO Transferencias(encargado_traslado,autorizado_empleado,deposito_origen,deposito_destino)
+		VALUES(encargado_traslado,autorizado_empleado_id,deposito_origen_id,deposito_destino_id);
+END | 
+DELIMITER ;
 
 
-m
-m
-mm
-m
-m
-m
 
-m
-m
-m
-m
-m
-m
 
-mm
+DROP PROCEDURE IF EXISTS p_agregar_transferencia_detalles;
+DELIMITER | 
+CREATE PROCEDURE p_agregar_transferencia_detalles(producto_id INT, cantidad_p DECIMAl(10,0))
+BEGIN
+	DECLARE cantidad_stock, id_transferencia, deposito_o , deposito_d  INT;
+	SET id_transferencia = (SELECT MAX(id) FROM Transferencias);
+	SET deposito_o = (SELECT deposito_origen FROM Transferencias t WHERE t.id = id_transferencia);
+	SET deposito_d = (SELECT deposito_destino FROM Transferencias t WHERE t.id = id_transferencia);
+	SET cantidad_stock = (SELECT SUM(cantidad) FROM Stocks s WHERE s.producto_id = producto_id AND s.depositos_id = deposito_o);
+	
+	IF (cantidad_p > cantidad_stock) THEN
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Error la cantidad en stock no es suficiente para cubrir la demanda';
+	END IF;
+	
+	UPDATE Stocks s
+		SET cantidad = cantidad - cantidad_p
+		WHERE s.depositos_id = deposito_o;
+	UPDATE Stocks s 
+		SET cantidad = cantidad + cantidad_p
+		WHERE s.depositos_id = deposito_d;
 
-m
-m
-m
-m
-m
-m
-a
-a
-a
-a
-a
-a
-a
-a
-a
-a
-a
-a
-a
-a
-a
-a
-a
-a
-a
+	INSERT INTO Transferencia_detalles(transferencia_id,producto_id,cantidad)
+		VALUES(id_transferencia,producto_id,cantidad_p);
+END | 
+DELIMITER ;
 
-a
+-- SELECT * FROM Stocks;
+-- call p_generar_transferencia('Juan',1,1,2);
+-- call p_agregar_transferencia_detalles(1,2);
+-- SELECT * FROM Stocks;
+

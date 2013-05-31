@@ -67,7 +67,7 @@ BEGIN
 	SET id_transferencia = (SELECT MAX(id) FROM Transferencias);
 	SET deposito_o = (SELECT deposito_origen FROM Transferencias t WHERE t.id = id_transferencia);
 	SET deposito_d = (SELECT deposito_destino FROM Transferencias t WHERE t.id = id_transferencia);
-	SET cantidad_stock = (SELECT SUM(cantidad) FROM Stocks s WHERE s.producto_id = producto_id AND s.depositos_id = deposito_o);
+	SET cantidad_stock = (SELECT cantidad FROM Stocks s WHERE s.producto_id = producto_id AND s.depositos_id = deposito_o);
 	
 	IF (cantidad_p > cantidad_stock) THEN
 		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Error la cantidad en stock no es suficiente para cubrir la demanda';
@@ -97,6 +97,8 @@ BEGIN
 END | 
 DELIMITER ;
 
+
+
 #-- Test Unitario
 #SELECT * FROM Venta_facturas;
 #SELECT * FROM Venta_detalles;
@@ -106,3 +108,4 @@ DELIMITER ;
 #SELECT * FROM Venta_facturas;
 #SELECT * FROM Venta_detalles;
 #SELECT * FROM Stocks;
+

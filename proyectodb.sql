@@ -287,7 +287,7 @@ CREATE TABLE Pago_cliente(
 -- TABLE: pago_proveedor 
 --
 
-CREATE TABLE pago_proveedor(
+CREATE TABLE Pago_proveedor(
     id             INT             AUTO_INCREMENT,
     proveedor      INT             NOT NULL,
     fecha          DATE            NOT NULL,
@@ -552,7 +552,7 @@ CREATE INDEX Ref375 ON Pago_cliente(cliente)
 -- INDEX: Ref982 
 --
 
-CREATE INDEX Ref982 ON pago_proveedor(proveedor)
+CREATE INDEX Ref982 ON Pago_proveedor(proveedor)
 ;
 -- 
 -- INDEX: Ref1831 
@@ -737,7 +737,7 @@ ALTER TABLE Detalles_orden_de_pago_clientes ADD CONSTRAINT RefPago_cliente78
 
 ALTER TABLE Detalles_orden_de_pago_proveedores ADD CONSTRAINT Refpago_proveedor81 
     FOREIGN KEY (pp_id)
-    REFERENCES pago_proveedor(id)
+    REFERENCES Pago_proveedor(id)
 ;
 
 ALTER TABLE Detalles_orden_de_pago_proveedores ADD CONSTRAINT RefOrdenes_de_pago_proveedores45 
@@ -807,7 +807,7 @@ ALTER TABLE Ordenes_de_pago_clientes ADD CONSTRAINT RefPago_cliente77
 
 ALTER TABLE Ordenes_de_pago_proveedores ADD CONSTRAINT Refpago_proveedor80 
     FOREIGN KEY (pp_id)
-    REFERENCES pago_proveedor(id)
+    REFERENCES Pago_proveedor(id)
 ;
 
 ALTER TABLE Ordenes_de_pago_proveedores ADD CONSTRAINT RefCompra_facturas44 
@@ -830,7 +830,7 @@ ALTER TABLE Pago_cliente ADD CONSTRAINT RefClientes75
 -- TABLE: pago_proveedor 
 --
 
-ALTER TABLE pago_proveedor ADD CONSTRAINT RefProveedores82 
+ALTER TABLE Pago_proveedor ADD CONSTRAINT RefProveedores82 
     FOREIGN KEY (proveedor)
     REFERENCES Proveedores(id)
 ;

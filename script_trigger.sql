@@ -63,11 +63,10 @@ DROP PROCEDURE IF EXISTS p_agregar_transferencia_detalles;
 DELIMITER | 
 CREATE PROCEDURE p_agregar_transferencia_detalles(producto_id INT, cantidad_p DECIMAl(10,0))
 BEGIN
-	DECLARE cantidad_stock, id_transferencia, deposito_o , deposito_d  INT;
+	DECLARE id_transferencia, deposito_o , deposito_d  INT;
 	SET id_transferencia = (SELECT MAX(id) FROM Transferencias);
 	SET deposito_o = (SELECT deposito_origen FROM Transferencias t WHERE t.id = id_transferencia);
 	SET deposito_d = (SELECT deposito_destino FROM Transferencias t WHERE t.id = id_transferencia);
-	SET cantidad_stock = (SELECT cantidad FROM Stocks s WHERE s.producto_id = producto_id AND s.depositos_id = deposito_o);
 	
 	UPDATE Stocks s
 		SET cantidad = cantidad - cantidad_p

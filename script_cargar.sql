@@ -82,18 +82,7 @@ insert into Stocks(producto_id,depositos_id,cantidad) values
 	(3,1,14),
 	(4,1,16),
 	(5,1,18),
-	(1,2,11),
-	(2,2,13),
-	(3,2,15),
-	(4,2,17),
-	(5,2,19),
-	(6,2,4),
-	(1,3,2),
-	(2,3,3),
-	(3,3,4),
-	(4,3,5),
-	(5,3,6),
-	(6,3,7);
+	(6,2,4);
 
 insert into Proveedores(id,nombre,direccion,telefono,contacto,mail,saldo,categoria) values
 	(1,'CablePar',1,071200093,'Juan Gomez','juan@gmail.com',1000000,1),

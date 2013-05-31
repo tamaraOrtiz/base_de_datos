@@ -136,13 +136,13 @@ insert into Venta_facturas(id,cliente,fecha_emision,fecha_vencimiento,condicion,
 	(5,5,'13-05-20','13-05-24',2,1),
 	(6,6,'13-05-24','13-06-01',1,1);
 
-insert into Venta_detalles(id,venta_id,producto_id,precio_unitario,cantidad,iva,saldo) values
-	(1,1,1,800,10,5,0),
-	(2,2,2,300,5,10,10000),
-	(3,3,3,400,10,0,500000),
-	(4,4,4,1000,8,10,0),
-	(5,5,5,1500,5,10,0),
-	(6,6,6,1000,4,0,100000);
+insert into Venta_detalles(id,venta_id,producto_id,precio_unitario,cantidad,iva,monto_total,saldo) values
+	(1,1,1,800,10,5,8000,0),
+	(2,2,2,300,5,10,1500,10000),
+	(3,3,3,400,10,0,4000,500000),
+	(4,4,4,1000,8,10,8000,0),
+	(5,5,5,1500,5,10,7500,0),
+	(6,6,6,1000,4,0,4000,100000);
 
 insert into Pago_cliente(id,fecha,observacion,cliente) values
 	(1,'13-05-18','pago atrasado',1),

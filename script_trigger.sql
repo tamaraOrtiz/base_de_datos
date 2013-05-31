@@ -85,6 +85,18 @@ BEGIN
 END | 
 DELIMITER ;
 
+
+DROP TRIGGER IF EXISTS t_stock;
+DELIMITER | 
+CREATE TRIGGER t_stock BEFORE UPDATE ON Stocks
+FOR EACH ROW 
+BEGIN
+	IF (NEW.cantidad < 0) THEN
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Error la cantidad en stock no es suficiente para cubrir la demanda';
+	END IF;
+END | 
+DELIMITER ;
+
 #-- Test Unitario
 #SELECT * FROM Venta_facturas;
 #SELECT * FROM Venta_detalles;

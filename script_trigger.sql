@@ -69,10 +69,6 @@ BEGIN
 	SET deposito_d = (SELECT deposito_destino FROM Transferencias t WHERE t.id = id_transferencia);
 	SET cantidad_stock = (SELECT cantidad FROM Stocks s WHERE s.producto_id = producto_id AND s.depositos_id = deposito_o);
 	
-	IF (cantidad_p > cantidad_stock) THEN
-		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Error la cantidad en stock no es suficiente para cubrir la demanda';
-	END IF;
-	
 	UPDATE Stocks s
 		SET cantidad = cantidad - cantidad_p
 		WHERE s.depositos_id = deposito_o;
@@ -105,6 +101,7 @@ DELIMITER ;
 #SELECT * FROM Stocks;
 #call p_generar_factura_de_venta(1,1,1,NOW(),NOW()); 
 #call p_agregar_detalles_factura_de_venta(1,3,20000);
+#call p_agregar_transferencia_detalles(1,3);
 #SELECT * FROM Venta_facturas;
 #SELECT * FROM Venta_detalles;
 #SELECT * FROM Stocks;

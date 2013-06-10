@@ -80,6 +80,17 @@ BEGIN
 END | 
 DELIMITER ;
 
+DROP PROCEDURE IF EXISTS p_agregar_pago_cliente;
+DELIMITER |
+CREATE PROCEDURE p_agregar_pago_cliente(cliente_id INT, observacion DATE)
+BEGIN
+	DECLARE fecha_actual DATE;
+	SET fecha_actual = CURDATE();
+	INSERT INTO Pago_cliente(cliente,fecha,observacion)
+		VALUES(cliente_id,fecha_actual,observacion);
+END |
+DELIMITER ;
+
 
 DROP TRIGGER IF EXISTS t_stock;
 DELIMITER | 

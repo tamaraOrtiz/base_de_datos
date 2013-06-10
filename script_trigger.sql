@@ -91,6 +91,34 @@ BEGIN
 END |
 DELIMITER ;
 
+DROP PROCEDURE IF EXISTS p_ordenes_de_pago_clientes;
+DELIMITER |
+CREATE PROCEDURE p_ordenes_de_pago_clientes(factura_id INT, importe INT)
+BEGIN
+	DECLARE id_pc INT; 
+	SET id_pc = (SELECT MAX(id) FROM Pago_cliente);
+	UPDATE Venta_detalles vd 
+		SET saldo = saldo - importe
+		WHERE vd.id = factura_id;
+
+	INSERT INTO Ordenes_de_pago_clientes(pc_id,factura_id,importe)
+		VALUES(id_pc,factura_id,importe);
+END |
+DELIMITER ;
+ 
+DROP TRIGGER IF EXISTS t_ordenes_de_pago_clientes;
+DELIMITER | 
+CREATE TRIGGER t_ordenes_de_pago_clientes BEFORE INSERT ON Ordenes_de_pago_clientes
+FOR EACH ROW 
+BEGIN
+	DECLARE condicion_id INT;
+	SET condicion_id = (SELECT condicion FROM Venta_facturas vf WHERE vf.id = NEW.factura_id);
+	IF (condicion_id = 1) THEN
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'La factura ya fue pagada';
+	END IF;
+END | 
+DELIMITER ;
+
 
 DROP TRIGGER IF EXISTS t_stock;
 DELIMITER | 

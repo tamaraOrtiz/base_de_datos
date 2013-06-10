@@ -162,9 +162,9 @@ insert into Ordenes_de_pago_clientes(id,factura_id,pc_id,importe) values
 
 insert into Detalles_orden_de_pago_clientes(id,orden_pago_id,importe,forma_de_pago,pc_id) values
 	(1,1,100000,'contado',1),
-	(2,2,50000,'credito',2),
-	(3,3,10000,'credito',3),
-	(4,4,60000,'contado',4),
+	(2,2,50000,'cheque',2),
+	(3,3,10000,'cheque',3),
+	(4,4,60000,'cheque',4),
 	(5,5,40000,'contado',5),
 	(6,6,10000,'contado',6);
 

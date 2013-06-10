@@ -105,7 +105,20 @@ BEGIN
 		VALUES(id_pc,factura_id,importe);
 END |
 DELIMITER ;
- 
+
+DROP PROCEDURE IF EXISTS p_detalles_orden_de_pago_clientes;
+DELIMITER |
+CREATE PROCEDURE p_detalles_orden_de_pago_clientes(forma_de_pago VARCHAR(100))
+BEGIN
+	DECLARE id_pc, orden_de_pago_id, importe_od INT; 
+	SET id_pc = (SELECT MAX(id) FROM Pago_cliente);
+	SET orden_de_pago_id = (SELECT MAX(id) FROM Ordenes_de_pago_clientes);
+	SET importe_od = (SELECT importe FROM Ordenes_de_pago_clientes op WHERE op.id = orden_de_pago_id);
+	INSERT INTO Detalles_orden_de_pago_clientes(pc_id,orden_pago_id,importe,forma_de_pago)
+		VALUES(id_pc,orden_de_pago_id,importe_od,forma_de_pago);
+END |
+DELIMITER ;
+
 DROP TRIGGER IF EXISTS t_ordenes_de_pago_clientes;
 DELIMITER | 
 CREATE TRIGGER t_ordenes_de_pago_clientes BEFORE INSERT ON Ordenes_de_pago_clientes

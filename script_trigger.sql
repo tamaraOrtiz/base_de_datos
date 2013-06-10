@@ -133,6 +133,7 @@ END |
 DELIMITER ;
 
 
+
 DROP TRIGGER IF EXISTS t_stock;
 DELIMITER | 
 CREATE TRIGGER t_stock BEFORE UPDATE ON Stocks
@@ -144,7 +145,57 @@ BEGIN
 END | 
 DELIMITER ;
 
+DROP PROCEDURE IF EXISTS p_agregar_pago_proveedores;
+DELIMITER |
+CREATE PROCEDURE p_agregar_pago_proveedores(proveerdor_id INT, observacion DATE)
+BEGIN
+	DECLARE fecha_actual DATE;
+	SET fecha_actual = CURDATE();
+	INSERT INTO Pago_cliente(proveedor,fecha,observacion)
+		VALUES(proveedor_id,fecha_actual,observacion);
+END |
+DELIMITER ;
 
+DROP PROCEDURE IF EXISTS p_ordenes_de_pago_proveedores;
+DELIMITER |
+CREATE PROCEDURE p_ordenes_de_pago_proveedores(factura_id INT, importe INT)
+BEGIN
+	DECLARE id_pp INT; 
+	SET id_pp = (SELECT MAX(id) FROM Pago_proveedores);
+	UPDATE Compra_facturas cf
+		SET saldo = saldo - importe
+		WHERE cf.id = factura_id;
+
+	INSERT INTO Ordenes_de_pago_proveedores(pp_id,importe,factura_id)
+		VALUES(id_pp,importe,factura_id);
+END |
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS p_detalles_orden_de_pago_proveedores;
+DELIMITER |
+CREATE PROCEDURE p_detalles_orden_de_pago_proveedores(forma_de_pago VARCHAR(100))
+BEGIN
+	DECLARE id_pp, orden_de_pago_id, importe_od INT; 
+	SET id_pp = (SELECT MAX(id) FROM Pago_proveedores);
+	SET orden_de_pago_id = (SELECT MAX(id) FROM Ordenes_de_pago_proveedores);
+	SET importe_od = (SELECT importe FROM Ordenes_de_pago_proveedores op WHERE op.id = orden_de_pago_id);
+	INSERT INTO Detalles_orden_de_pago_proveedores(pp_id,orden_pago_id,importe,forma_de_pago)
+		VALUES(id_pp,orden_de_pago_id,importe_od,forma_de_pago);
+END |
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS t_ordenes_de_pago_proveedores;
+DELIMITER | 
+CREATE TRIGGER t_ordenes_de_pago_proveedores BEFORE INSERT ON Ordenes_de_pago_proveedores
+FOR EACH ROW 
+BEGIN
+	DECLARE condicion_id INT;
+	SET condicion_id = (SELECT condicion FROM Compra_facturas cf WHERE cf.id = NEW.factura_id);
+	IF (condicion_id = 1) THEN
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'La factura ya fue pagada';
+	END IF;
+END | 
+DELIMITER ;
 
 #-- Test Unitario
 #SELECT * FROM Venta_facturas;

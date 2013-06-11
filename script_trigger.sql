@@ -230,4 +230,3 @@ call p_agregar_detalles_factura_de_venta(1,3,20000);
 SELECT * FROM Venta_facturas;
 SELECT * FROM Venta_detalles;
 SELECT * FROM Stocks;
-

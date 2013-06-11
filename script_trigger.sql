@@ -1,4 +1,5 @@
 USE proyectodb;
+
 DROP PROCEDURE IF EXISTS p_generar_factura_de_venta;
 DELIMITER | 
 CREATE PROCEDURE p_generar_factura_de_venta(cliente_id INT,deposito_de_egreso_id INT,
@@ -8,6 +9,7 @@ BEGIN
 		VALUES(cliente_id,deposito_de_egreso_id,condicion_id,fecha_de_emision,fecha_de_vencimiento);
 END | 
 DELIMITER ;
+
 
 DROP TRIGGER IF EXISTS t_factura_de_venta;
 DELIMITER | 
@@ -20,6 +22,7 @@ BEGIN
 END|
 DELIMITER ;
 
+
 DROP PROCEDURE IF EXISTS p_agregar_detalles_factura_de_venta;
 DELIMITER |
 /*
@@ -29,8 +32,7 @@ DELIMITER |
 */ 
 CREATE PROCEDURE p_agregar_detalles_factura_de_venta(producto_agregado_id INT,cantidad_vendida INT, descuento INTEGER)
 BEGIN
-	DECLARE id_venta, condicion_de_venta,precio_por_unidad,iva_id, cantidad_stock, costo_total,
-		descuento_limite INT;
+	DECLARE id_venta, condicion_de_venta,precio_por_unidad,iva_id, cantidad_stock, costo_total,descuento_limite INT;
 	SET id_venta = (SELECT MAX(id) FROM Venta_facturas);
 	SET precio_por_unidad = (SELECT costo_unitario FROM Productos p WHERE p.id = producto_agregado_id);
 	SET iva_id = (SELECT iva_impuesto FROM Productos p WHERE p.id = producto_agregado_id);
@@ -40,38 +42,31 @@ BEGIN
 END | 
 DELIMITER ;
 
-DROP TRIGGER IF EXISTS t_venta_detalles;
-DELIMITER | 
-CREATE TRIGGER t_venta_detalles BEFORE INSERT ON Venta_detalles
-FOR EACH ROW 
-BEGIN
-	DECLARE limite_credito,condicion_de_venta, limite_descuento, cantidad_stock INTEGER;
-	SET limite_credito = 1000000;
-	SET condicion_de_venta = (SELECT condicion FROM Venta_facturas vf WHERE vf.id = id_venta);
-	IF (saldo> limite_credito) THEN
-		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Error Saldo inferior al maximo de descuento permitido para esta cuenta';
-	END IF;
-	SET limite_descuento = IF(condicion_de_venta=1,NEW.costo_total*20/100,NEW.costo_total*10/100);
-	IF (descuento > limite_descuento) THEN
-		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Error descuento mayor al limite_descuento';
-	END IF;
-	SET cantidad_stock = (SELECT SUM(cantidad) FROM Stocks s WHERE s.producto_id = producto_id);
-	IF (cantidad_stock < cantidad_vendida ) THEN
-		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Error la cantidad en stock no es suficiente para cubrir la demanda';
-	END IF;
-END | 
-DELIMITER ;
 
 DROP TRIGGER IF EXISTS t_venta_detalles;
 DELIMITER | 
 CREATE TRIGGER t_venta_detalles BEFORE INSERT ON Venta_detalles
 FOR EACH ROW 
 BEGIN
-	DECLARE deposito INT;
+	DECLARE deposito, limite_credito,condicion_de_venta, limite_descuento, cantidad_stock INTEGER;
+	SET limite_credito = 1000000;
+	SET condicion_de_venta = (SELECT condicion FROM Venta_facturas vf WHERE vf.id = NEW.venta_id);
+	IF (NEW.saldo> limite_credito) THEN
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Error Saldo inferior al maximo de descuento permitido para esta cuenta';
+	END IF;
+	SET limite_descuento = IF(condicion_de_venta=1,NEW.monto_total*20/100,NEW.monto_total*10/100);
+	IF (NEW.descuento > limite_descuento) THEN
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Error descuento mayor al limite_descuento';
+	END IF;
+	SET cantidad_stock = (SELECT SUM(cantidad) FROM Stocks s WHERE s.producto_id = producto_id);
+	IF (cantidad_stock < NEW.cantidad ) THEN
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Error la cantidad en stock no es suficiente para cubrir la demanda';
+	END IF;
 	SET deposito = (SELECT deposito_egreso FROM Venta_facturas vf WHERE vf.id = last_insert_id());
 	UPDATE Stocks s
 		SET cantidad = cantidad - NEW.cantidad
 		WHERE s.depositos_id = deposito and s.producto_id = NEW.producto_id;
+	
 END | 
 DELIMITER ;
 
@@ -225,7 +220,7 @@ SELECT * FROM Venta_facturas;
 SELECT * FROM Venta_detalles;
 SELECT * FROM Stocks;
 call p_generar_factura_de_venta(1,1,1,NOW(),NOW()); 
-call p_agregar_detalles_factura_de_venta(1,3,20000);
+call p_agregar_detalles_factura_de_venta(1,3,200);
 -- call p_agregar_transferencia_detalles(1,3);
 SELECT * FROM Venta_facturas;
 SELECT * FROM Venta_detalles;

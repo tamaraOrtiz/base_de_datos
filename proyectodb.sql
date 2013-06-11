@@ -49,7 +49,7 @@ CREATE TABLE Clientes(
     telefono     VARCHAR(100)      NOT NULL,
     contacto     VARCHAR(100)      NOT NULL,
     mail         VARCHAR(100)      NOT NULL,
-    saldo        DECIMAL(10, 0)    NOT NULL,
+    linea_de_credito       DECIMAL(10, 0)    NOT NULL,
     PRIMARY KEY (id)
 )ENGINE=MYISAM
 ;
@@ -392,6 +392,7 @@ CREATE TABLE Venta_detalles(
     cantidad           DECIMAL(6, 0)     NOT NULL,
     iva                DECIMAL(2, 0)     NOT NULL,
     monto_total        DECIMAL(10, 0)    NOT NULL,
+	descuento		   DECIMAL(10,0 )    NOT NULL,
     saldo              DECIMAL(10, 0)    NOT NULL,
     PRIMARY KEY (id, venta_id)
 )ENGINE=MYISAM

@@ -216,12 +216,12 @@ BEGIN
 END | 
 DELIMITER ;
 
-SELECT * FROM Venta_facturas;
-SELECT * FROM Venta_detalles;
-SELECT * FROM Stocks;
-call p_generar_factura_de_venta(1,1,1,NOW(),NOW()); 
-call p_agregar_detalles_factura_de_venta(1,3,200);
+-- SELECT * FROM Venta_facturas;
+-- SELECT * FROM Venta_detalles;
+-- SELECT * FROM Stocks;
+-- call p_generar_factura_de_venta(1,1,1,NOW(),NOW()); 
+-- call p_agregar_detalles_factura_de_venta(1,3,200);
 -- call p_agregar_transferencia_detalles(1,3);
-SELECT * FROM Venta_facturas;
-SELECT * FROM Venta_detalles;
-SELECT * FROM Stocks;
+-- SELECT * FROM Venta_facturas;
+-- SELECT * FROM Venta_detalles;
+-- SELECT * FROM Stocks;

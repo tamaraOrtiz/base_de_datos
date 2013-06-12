@@ -309,6 +309,7 @@ CREATE TABLE Productos(
     linea              INT               NOT NULL,
     iva_impuesto       INT               NOT NULL,
     costo_unitario     DECIMAL(10, 0)    NOT NULL,
+	nombre 			   VARCHAR(100),
     descripcion        VARCHAR(100),
     PRIMARY KEY (id)
 )ENGINE=MYISAM
@@ -955,5 +956,4 @@ ALTER TABLE Venta_facturas ADD CONSTRAINT RefCondiciones17
     FOREIGN KEY (condicion)
     REFERENCES Condiciones(id)
 ;
-
 

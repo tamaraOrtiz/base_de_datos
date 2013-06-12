@@ -1,3 +1,6 @@
+SELECT fecha_emision AS Fecha, deposito_egreso AS Deposito, COUNT(deposito_egreso) AS Total_de_Ventas FROM Venta_facturas 
+	WHERE (fecha_emision > "13-05-14" AND fecha_emision < "13-06-24") GROUP BY fecha_emision;
+
 SELECT t1.producto_id, t2.nombre, t1.cantidad FROM Venta_detalles t1, Productos t2 
 	WHERE t1.producto_id = t2.id ORDER BY t1.cantidad DESC LIMIT 5;
 

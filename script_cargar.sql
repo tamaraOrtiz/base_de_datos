@@ -134,7 +134,8 @@ insert into Venta_facturas(id,cliente,fecha_emision,fecha_vencimiento,condicion,
 	(3,3,'13-05-16','13-05-20',2,3),
 	(4,4,'13-05-18','13-05-21',1,3),
 	(5,5,'13-05-20','13-05-24',2,1),
-	(6,6,'13-05-24','13-06-06',1,1);
+	(6,5,'13-05-20','13-05-24',2,1),
+	(7,6,'13-05-24','13-06-06',1,1);
 
 insert into Venta_detalles(id,venta_id,producto_id,precio_unitario,cantidad,iva,monto_total,descuento,saldo) values
 	(1,1,1,800,10,5,8000,1,0),

@@ -84,6 +84,7 @@ CREATE TABLE Compra_facturas(
     condicion            INT               NOT NULL,
     fecha_emision        DATE              NOT NULL,
     fecha_vencimiento    DATE              NOT NULL,
+	monto_total          DECIMAL(10, 0)    NOT NULL,
     saldo                DECIMAL(10, 0)    NOT NULL,
     PRIMARY KEY (id)
 )ENGINE=MYISAM

@@ -112,13 +112,13 @@ insert into Condiciones(id,nombre) values
 	(1,'contado'),
 	(2,'credito');
 
-insert into Compra_facturas(id,proveedor,deposito_ingreso,condicion,fecha_emision,fecha_vencimiento,saldo) values
-	(1,1,1,1,'13-05-10','13-05-18',0),
-	(2,2,2,2,'13-05-15','13-05-23',1000000),
-	(3,3,3,1,'13-05-16','13-05-20',0),
-	(4,4,1,2,'13-05-18','13-05-21',500000),
-	(5,5,3,2,'13-05-20','13-05-24',1000000),
-	(6,6,3,1,'13-05-24','13-06-01',0);
+insert into Compra_facturas(id,proveedor,deposito_ingreso,condicion,fecha_emision,fecha_vencimiento, monto_total,saldo) values
+	(1,1,1,1,'13-05-10','13-05-18',8000000,0),
+	(2,2,2,2,'13-05-15','13-05-23',3000000,1000000),
+	(3,3,3,1,'13-05-16','13-05-20',400000,0),
+	(4,4,1,2,'13-05-18','13-05-21',5000000,500000),
+	(5,5,3,2,'13-05-20','13-05-24',15000000,1000000),
+	(6,6,3,1,'13-05-24','13-06-01',500000,0);
 
 insert into Compra_detalles(id,compra_id,producto_id,costo_unitario,cantidad,iva) values
 	(1,1,1,800,10000,5),

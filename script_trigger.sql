@@ -144,6 +144,9 @@ BEGIN
 END | 
 DELIMITER ;
 
+call p_generar_factura_de_venta(1,1,1,NOW(),NOW()); 
+call p_generar_factura_de_compra(1,1,1,NOW(),NOW()); 
+call p_generar_transferencia('Juan Miranda',1,1,2);
 DROP PROCEDURE IF EXISTS p_agregar_pago_cliente;
 DELIMITER |
 CREATE PROCEDURE p_agregar_pago_cliente(cliente_id INT, observacion DATE)

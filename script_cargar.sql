@@ -23,19 +23,19 @@ insert into Clientes(id,nombre,direccion,telefono,contacto,mail,linea_de_credito
 	(6,'Marcos Ledezma',6,'200310','Marcos Ledezma','marcos@uni.edu.py',1000000,2);
 
 insert into Marcas_productos(id,nombre) values
-	(1,'GE Lighting'),
-	(2,'Cables Epuyen S.R.L.'),
+	(1,'Tramontina'),
+	(2,'Brisa'),
 	(3,'Impaco'),
-	(4,'Cambre'),
-	(5,'Conatel'),
-	(6,'Sassin');
+	(4,'Tigre'),
+	(5,'Leon'),
+	(6,'Fore');
 
 insert into Lineas_productos(id,descripcion,nombre) values
-	(1,'Tipo RG 59,6,11', 'Cables Coaxiales 75 W'),
-	(2,'blanco','interruptores'),
-	(3,'2 mtrs.','prolongadores'),
-	(4,'20 W','Luces'),
-	(5,'negro, marron y blanco','arrancadores'),
+	(1,'4 mm', 'cable'),
+	(2,'macho','toma corriente'),
+	(3,'2 mtrs. bronce','jabalina'),
+	(4,'3/4','canho corrugado'),
+	(5,'negro, marron y blanco','porta foco'),
 	(6,'100 w','foco');
 
 insert into Impuestos(id,nombre,porcentaje) values
@@ -47,13 +47,13 @@ insert into Categorias(id,nombre,linea_credito) values
 	(1,'minorista',2000000),
 	(2,'mayorista',10000000);
 
-insert into Productos(id,marca,linea,codigo_de_barra,nombre,descripcion,costo_unitario,iva_impuesto) values
-	(1,3,1,254678559,'cable coaxial RG 59 ','RG  59',800,2),
-	(2,6,2,145758895,'Toma corriente','blanco',300,3),
-	(3,1,4,558799486,'Luces LED','Azul',400,1),
-	(4,4,3,587945784,'Prolongador','blanco',1000,2),
-	(5,5,4,784595227,'arrancador','blanco',1500,1),
-	(6,2,6,214557845,'foco grande','60 w',1000,3);
+insert into Productos(id,marca,linea,codigo_de_barra,descripcion,costo_unitario,iva_impuesto) values
+	(1,1,1,254678559,'4 mm',800,2),
+	(2,2,2,145758895,'macho',300,3),
+	(3,3,3,558799486,'1 mtr.',400,1),
+	(4,4,4,587945784,'3/4',1000,2),
+	(5,5,4,784595227,'blanco',1500,1),
+	(6,6,6,214557845,'60 w',1000,3);
 
 insert into Empleados(id,nombre,direccion,telefono,mail) values
 	(1,'Juan Petta',1,'200305','juan@uni.edu.py'),
@@ -112,13 +112,13 @@ insert into Condiciones(id,nombre) values
 	(1,'contado'),
 	(2,'credito');
 
-insert into Compra_facturas(id,proveedor,deposito_ingreso,condicion,fecha_emision,fecha_vencimiento, monto_total,saldo) values
-	(1,1,1,1,'13-05-10','13-05-18',8000000,0),
-	(2,2,2,2,'13-05-15','13-05-23',3000000,1000000),
-	(3,3,3,1,'13-05-16','13-05-20',400000,0),
-	(4,4,1,2,'13-05-18','13-05-21',5000000,500000),
-	(5,5,3,2,'13-05-20','13-05-24',15000000,1000000),
-	(6,6,3,1,'13-05-24','13-06-01',500000,0);
+insert into Compra_facturas(id,proveedor,deposito_ingreso,condicion,fecha_emision,fecha_vencimiento,saldo) values
+	(1,1,1,1,'13-05-10','13-05-18',0),
+	(2,2,2,2,'13-05-15','13-05-23',1000000),
+	(3,3,3,1,'13-05-16','13-05-20',0),
+	(4,4,1,2,'13-05-18','13-05-21',500000),
+	(5,5,3,2,'13-05-20','13-05-24',1000000),
+	(6,6,3,1,'13-05-24','13-06-01',0);
 
 insert into Compra_detalles(id,compra_id,producto_id,costo_unitario,cantidad,iva) values
 	(1,1,1,800,10000,5),
@@ -134,8 +134,7 @@ insert into Venta_facturas(id,cliente,fecha_emision,fecha_vencimiento,condicion,
 	(3,3,'13-05-13','13-05-20',2,3),
 	(4,4,'13-05-18','13-05-21',1,3),
 	(5,5,'13-05-20','13-05-24',2,1),
-	(6,5,'13-05-20','13-05-24',2,1),
-	(7,6,'13-05-24','13-06-06',1,1);
+	(6,6,'13-05-24','13-06-01',1,1);
 
 insert into Venta_detalles(id,venta_id,producto_id,precio_unitario,cantidad,iva,monto_total,descuento,saldo) values
 	(1,1,1,800,10,5,8000,1,0),

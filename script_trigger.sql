@@ -23,6 +23,49 @@ END|
 DELIMITER ;
 
 
+DROP PROCEDURE IF EXISTS p_generar_factura_de_compra;
+DELIMITER | 
+CREATE PROCEDURE p_generar_factura_de_compra(proveedor_id INT,deposito_de_ingreso_id INT,
+	condicion_id INT,fecha_de_emision DATE,fecha_de_vencimiento DATE)
+BEGIN
+	INSERT INTO Venta_facturas(proveedor,deposito_egreso,condicion,fecha_emision,fecha_vencimiento)
+		VALUES(proveedor_id,deposito_de_ingreso_id,condicion_id,fecha_de_emision,fecha_de_vencimiento);
+END | 
+DELIMITER ;
+
+
+DROP TRIGGER IF EXISTS t_factura_de_compra;
+DELIMITER | 
+CREATE TRIGGER t_factura_de_compra BEFORE INSERT ON Venta_facturas
+FOR EACH ROW
+BEGIN
+	IF (NEW.fecha_emision < CURDATE() OR NEW.fecha_vencimiento < CURDATE()) THEN
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Fecha no valida';
+	END IF;
+END|
+DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS p_agregar_detalles_factura_de_compra;
+DELIMITER |
+/*
+* producto_agregado_id	es la referencia a un objeto del tipo producto
+* cantidad_vendida		es la cantidad de productos vendidos
+*/ 
+CREATE PROCEDURE p_agregar_detalles_factura_de_compra(producto_agregado_id INT,cantidad_vendida INT)
+BEGIN
+	DECLARE id_compra, condicion_de_venta,precio_por_unidad,iva_id, costo_total INT;
+	SET id_compra = (SELECT MAX(id) FROM Compra_facturas);
+	SET precio_por_unidad = (SELECT costo_unitario FROM Productos p WHERE p.id = producto_agregado_id);
+	SET iva_id = (SELECT iva_impuesto FROM Productos p WHERE p.id = producto_agregado_id);
+	SET costo_total = precio_por_unidad*cantidad_vendida;
+	INSERT INTO Compra_detalles(venta_id,producto_id,precio_unitario,cantidad,iva,monto_total,saldo)
+		VALUES(id_compra,producto_agregado_id,precio_por_unidad,cantidad_vendida,iva_id,costo_total,0);
+END | 
+DELIMITER ;
+
+
+
 DROP PROCEDURE IF EXISTS p_agregar_detalles_factura_de_venta;
 DELIMITER |
 /*
@@ -41,6 +84,7 @@ BEGIN
 		VALUES(id_venta,producto_agregado_id,precio_por_unidad,cantidad_vendida,iva_id,costo_total,descuento,0);
 END | 
 DELIMITER ;
+
 
 
 DROP TRIGGER IF EXISTS t_venta_detalles;
@@ -216,12 +260,12 @@ BEGIN
 END | 
 DELIMITER ;
 
--- SELECT * FROM Venta_facturas;
--- SELECT * FROM Venta_detalles;
--- SELECT * FROM Stocks;
--- call p_generar_factura_de_venta(1,1,1,NOW(),NOW()); 
--- call p_agregar_detalles_factura_de_venta(1,3,200);
+SELECT * FROM Venta_facturas;
+SELECT * FROM Venta_detalles;
+SELECT * FROM Stocks;
+call p_generar_factura_de_venta(1,1,1,NOW(),NOW()); 
+call p_agregar_detalles_factura_de_venta(1,3,200);
 -- call p_agregar_transferencia_detalles(1,3);
--- SELECT * FROM Venta_facturas;
--- SELECT * FROM Venta_detalles;
--- SELECT * FROM Stocks;
+SELECT * FROM Venta_facturas;
+SELECT * FROM Venta_detalles;
+SELECT * FROM Stocks;

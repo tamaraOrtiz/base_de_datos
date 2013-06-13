@@ -57,11 +57,11 @@ DELIMITER |
 */ 
 CREATE PROCEDURE p_agregar_detalles_factura_de_compra(producto_agregado_id INT,cantidad_comprada INT)
 BEGIN
-	DECLARE id_compra, condicion_de_venta,precio_por_unidad,iva_id, costo_total INT;
+	DECLARE id_compra, condicion_de_venta,precio_por_unidad,iva_id, costo_del_detalle INT;
 	SET id_compra			= (SELECT MAX(id) FROM Compra_facturas);
 	SET precio_por_unidad	= (SELECT costo_unitario FROM Productos p WHERE p.id = producto_agregado_id);
 	SET iva_id				= (SELECT iva_impuesto FROM Productos p WHERE p.id = producto_agregado_id);
-	SET costo_total 		= precio_por_unidad*cantidad_comprada;
+	SET costo_del_detalle = precio_por_unidad*cantidad_comprada;
 	INSERT INTO Compra_detalles(compra_id,producto_id,costo_unitario,cantidad,iva,monto_total,saldo)
 		VALUES(id_compra,producto_agregado_id,precio_por_unidad,cantidad_comprada,iva_id,costo_total,0);
 END | 

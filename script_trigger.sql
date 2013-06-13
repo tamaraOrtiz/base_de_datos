@@ -50,17 +50,17 @@ DROP PROCEDURE IF EXISTS p_agregar_detalles_factura_de_compra;
 DELIMITER |
 /*
 * producto_agregado_id	es la referencia a un objeto del tipo producto
-* cantidad_vendida		es la cantidad de productos vendidos
+* cantidad_vcomprada		es la cantidad de productos comprada
 */ 
-CREATE PROCEDURE p_agregar_detalles_factura_de_compra(producto_agregado_id INT,cantidad_vendida INT)
+CREATE PROCEDURE p_agregar_detalles_factura_de_compra(producto_agregado_id INT,cantidad_comprada INT)
 BEGIN
 	DECLARE id_compra, condicion_de_venta,precio_por_unidad,iva_id, costo_total INT;
-	SET id_compra = (SELECT MAX(id) FROM Compra_facturas);
-	SET precio_por_unidad = (SELECT costo_unitario FROM Productos p WHERE p.id = producto_agregado_id);
-	SET iva_id = (SELECT iva_impuesto FROM Productos p WHERE p.id = producto_agregado_id);
-	SET costo_total = precio_por_unidad*cantidad_vendida;
+	SET id_compra			= (SELECT MAX(id) FROM Compra_facturas);
+	SET precio_por_unidad	= (SELECT costo_unitario FROM Productos p WHERE p.id = producto_agregado_id);
+	SET iva_id				= (SELECT iva_impuesto FROM Productos p WHERE p.id = producto_agregado_id);
+	SET costo_total 		= precio_por_unidad*cantidad_comprada;
 	INSERT INTO Compra_detalles(venta_id,producto_id,precio_unitario,cantidad,iva,monto_total,saldo)
-		VALUES(id_compra,producto_agregado_id,precio_por_unidad,cantidad_vendida,iva_id,costo_total,0);
+		VALUES(id_compra,producto_agregado_id,precio_por_unidad,cantidad_comprada,iva_id,costo_total,0);
 END | 
 DELIMITER ;
 

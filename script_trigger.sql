@@ -59,8 +59,8 @@ BEGIN
 	SET precio_por_unidad	= (SELECT costo_unitario FROM Productos p WHERE p.id = producto_agregado_id);
 	SET iva_id				= (SELECT iva_impuesto FROM Productos p WHERE p.id = producto_agregado_id);
 	SET costo_del_detalle = precio_por_unidad*cantidad_comprada;
-	INSERT INTO Compra_detalles(compra_id,producto_id,costo_unitario,cantidad,iva,monto_total,saldo)
-		VALUES(id_compra,producto_agregado_id,precio_por_unidad,cantidad_comprada,iva_id,costo_total,0);
+	INSERT INTO Compra_detalles(compra_id,producto_id,costo_unitario,cantidad,iva)
+		VALUES(id_compra,producto_agregado_id,precio_por_unidad,cantidad_comprada,iva_id);
 END | 
 DELIMITER ;
 

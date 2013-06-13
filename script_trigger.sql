@@ -74,15 +74,15 @@ DELIMITER |
 * cantidad_vendida		es la cantidad de productos vendidos
 * descuento				es el dinero que se descontara
 */ 
-CREATE PROCEDURE p_agregar_detalles_factura_de_venta(producto_agregado_id INT,cantidad_vendida INT, descuento INTEGER)
+CREATE PROCEDURE p_agregar_detalles_factura_de_venta(producto_agregado_id INT,cantidad_vendida INT, descuento INT)
 BEGIN
-	DECLARE id_venta, condicion_de_venta,precio_por_unidad,iva_id, cantidad_stock, costo_total,descuento_limite INT;
+	DECLARE id_venta, condicion_de_venta,precio_por_unidad,iva_id, cantidad_stock, costo_del_detalle,descuento_limite INT;
 	SET id_venta = (SELECT MAX(id) FROM Venta_facturas);
 	SET precio_por_unidad = (SELECT costo_unitario FROM Productos p WHERE p.id = producto_agregado_id);
 	SET iva_id = (SELECT iva_impuesto FROM Productos p WHERE p.id = producto_agregado_id);
-	SET costo_total = precio_por_unidad*cantidad_vendida;
-	INSERT INTO Venta_detalles(venta_id,producto_id,precio_unitario,cantidad,iva,monto_total,descuento,saldo)
-		VALUES(id_venta,producto_agregado_id,precio_por_unidad,cantidad_vendida,iva_id,costo_total,descuento,0);
+	SET costo_del_detalle = precio_por_unidad*cantidad_vendida;
+	INSERT INTO Venta_detalles(venta_id,producto_id,precio_unitario,cantidad,iva,descuento)
+		VALUES(id_venta,producto_agregado_id,precio_por_unidad,cantidad_vendida,iva_id,descuento);
 END | 
 DELIMITER ;
 
@@ -145,9 +145,6 @@ BEGIN
 END | 
 DELIMITER ;
 
-call p_generar_factura_de_venta(1,1,1,NOW(),NOW()); 
-call p_generar_factura_de_compra(1,1,1,NOW(),NOW()); 
-call p_generar_transferencia('Juan Miranda',1,1,2);
 DROP PROCEDURE IF EXISTS p_agregar_pago_cliente;
 DELIMITER |
 CREATE PROCEDURE p_agregar_pago_cliente(cliente_id INT, observacion DATE)

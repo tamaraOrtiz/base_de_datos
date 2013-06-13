@@ -52,6 +52,7 @@ DELIMITER |
 * producto_agregado_id	es la referencia a un objeto del tipo producto
 * cantidad_vcomprada		es la cantidad de productos comprada
 */ 
+
 CREATE PROCEDURE p_agregar_detalles_factura_de_compra(producto_agregado_id INT,cantidad_comprada INT)
 BEGIN
 	DECLARE id_compra, condicion_de_venta,precio_por_unidad,iva_id, costo_del_detalle INT;

@@ -28,7 +28,7 @@ DELIMITER |
 CREATE PROCEDURE p_generar_factura_de_compra(proveedor_id INT,deposito_de_ingreso_id INT,
 	condicion_id INT,fecha_de_emision DATE,fecha_de_vencimiento DATE)
 BEGIN
-	INSERT INTO Compra_facturas(proveedor,deposito_egreso,condicion,fecha_emision,fecha_vencimiento,monto_total,saldo)
+	INSERT INTO Compra_facturas(proveedor,deposito_ingreso,condicion,fecha_emision,fecha_vencimiento,monto_total,saldo)
 		VALUES(proveedor_id,deposito_de_ingreso_id,condicion_id,fecha_de_emision,fecha_de_vencimiento,0,0);
 END | 
 DELIMITER ;
@@ -46,7 +46,8 @@ BEGIN
 END|
 DELIMITER ;
 
-
+call p_generar_factura_de_venta(1,1,1,NOW(),NOW()); 
+call p_generar_factura_de_compra(1,1,1,NOW(),NOW()); 
 
 DROP PROCEDURE IF EXISTS p_agregar_detalles_factura_de_compra;
 DELIMITER |
@@ -262,7 +263,7 @@ BEGIN
 END | 
 DELIMITER ;
 
-SELECT * FROM Venta_facturas;
+SELECT * FROM Compra_facturas;
 SELECT * FROM Venta_detalles;
 SELECT * FROM Stocks;
 call p_generar_factura_de_venta(1,1,1,NOW(),NOW()); 

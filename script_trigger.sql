@@ -5,8 +5,8 @@ DELIMITER |
 CREATE PROCEDURE p_generar_factura_de_venta(cliente_id INT,deposito_de_egreso_id INT,
 	condicion_id INT,fecha_de_emision DATE,fecha_de_vencimiento DATE)
 BEGIN
-	INSERT INTO Venta_facturas(cliente,deposito_egreso,condicion,fecha_emision,fecha_vencimiento,monto_total,saldo)
-		VALUES(cliente_id,deposito_de_egreso_id,condicion_id,fecha_de_emision,fecha_de_vencimiento,0,0);
+	INSERT INTO Venta_facturas(cliente,deposito_egreso,condicion,fecha_emision,fecha_vencimiento)
+		VALUES(cliente_id,deposito_de_egreso_id,condicion_id,fecha_de_emision,fecha_de_vencimiento);
 END | 
 DELIMITER ;
 
@@ -28,16 +28,15 @@ DELIMITER |
 CREATE PROCEDURE p_generar_factura_de_compra(proveedor_id INT,deposito_de_ingreso_id INT,
 	condicion_id INT,fecha_de_emision DATE,fecha_de_vencimiento DATE)
 BEGIN
-	INSERT INTO Compra_facturas(proveedor,deposito_ingreso,condicion,fecha_emision,fecha_vencimiento,monto_total,saldo)
-		VALUES(proveedor_id,deposito_de_ingreso_id,condicion_id,fecha_de_emision,fecha_de_vencimiento,0,0);
+	INSERT INTO Venta_facturas(proveedor,deposito_egreso,condicion,fecha_emision,fecha_vencimiento)
+		VALUES(proveedor_id,deposito_de_ingreso_id,condicion_id,fecha_de_emision,fecha_de_vencimiento);
 END | 
 DELIMITER ;
 
 
-
 DROP TRIGGER IF EXISTS t_factura_de_compra;
 DELIMITER | 
-CREATE TRIGGER t_factura_de_compra BEFORE INSERT ON Compra_facturas
+CREATE TRIGGER t_factura_de_compra BEFORE INSERT ON Venta_facturas
 FOR EACH ROW
 BEGIN
 	IF (NEW.fecha_emision < CURDATE() OR NEW.fecha_vencimiento < CURDATE()) THEN
@@ -46,8 +45,6 @@ BEGIN
 END|
 DELIMITER ;
 
-call p_generar_factura_de_venta(1,1,1,NOW(),NOW()); 
-call p_generar_factura_de_compra(1,1,1,NOW(),NOW()); 
 
 DROP PROCEDURE IF EXISTS p_agregar_detalles_factura_de_compra;
 DELIMITER |

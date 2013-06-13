@@ -128,21 +128,21 @@ insert into Compra_detalles(id,compra_id,producto_id,costo_unitario,cantidad,iva
 	(5,5,5,1500,10000,10),
 	(6,6,6,1000,500,0);
 
-insert into Venta_facturas(id,cliente,fecha_emision,fecha_vencimiento,condicion,deposito_egreso) values
-	(1,1,'13-05-10','13-05-18',1,1),
-	(2,2,'13-05-08','13-06-23',2,2),
-	(3,3,'13-05-13','13-05-20',2,3),
-	(4,4,'13-05-18','13-05-21',1,3),
-	(5,5,'13-05-20','13-05-24',2,1),
-	(6,6,'13-05-24','13-06-01',1,1);
+insert into Venta_facturas(id,cliente,fecha_emision,fecha_vencimiento,condicion,deposito_egreso,monto_total,saldo) values
+	(1,1,'13-05-10','13-05-18',1,1,10000,10000),
+	(2,2,'13-05-08','13-06-23',2,2,16000,0),
+	(3,3,'13-05-13','13-05-20',2,3,53000,0),
+	(4,4,'13-05-18','13-05-21',1,3,15000,0),
+	(5,5,'13-05-20','13-05-24',2,1,45000,45000),
+	(6,6,'13-05-24','13-06-01',1,1,2400,0);
 
-insert into Venta_detalles(id,venta_id,producto_id,precio_unitario,cantidad,iva,monto_total,descuento,saldo) values
-	(1,1,1,800,10,5,8000,1,0),
-	(2,2,2,300,5,10,1500,1,10000),
-	(3,3,1,400,10,0,4000,0,500000),
-	(4,4,4,1000,8,10,8000,1,0),
-	(5,5,5,1500,5,10,7500,0,0),
-	(6,6,6,1000,4,0,4000,1,100000);
+insert into Venta_detalles(id,venta_id,producto_id,precio_unitario,cantidad,iva,descuento) values
+	(1,1,1,800,10,5,1),
+	(2,2,2,300,5,10,1),
+	(3,3,1,400,10,0,0),
+	(4,4,4,1000,8,10,1),
+	(5,5,5,1500,5,10,0),
+	(6,6,6,1000,4,0,1);
 
 insert into Pago_cliente(id,fecha,observacion,cliente) values
 	(1,'13-05-18','pago atrasado',1),

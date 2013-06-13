@@ -393,9 +393,7 @@ CREATE TABLE Venta_detalles(
     precio_unitario    DECIMAL(10, 0)    NOT NULL,
     cantidad           DECIMAL(6, 0)     NOT NULL,
     iva                DECIMAL(2, 0)     NOT NULL,
-    monto_total        DECIMAL(10, 0)    NOT NULL,
 	descuento		   DECIMAL(10,0 )    NOT NULL,
-    saldo              DECIMAL(10, 0)    NOT NULL,
     PRIMARY KEY (id, venta_id)
 )ENGINE=MYISAM
 ;
@@ -413,6 +411,8 @@ CREATE TABLE Venta_facturas(
     condicion            INT,
     fecha_emision        DATE    NOT NULL,
     fecha_vencimiento    DATE    NOT NULL,
+	monto_total          DECIMAL(10, 0)    NOT NULL,
+    saldo                DECIMAL(10, 0)    NOT NULL,
     PRIMARY KEY (id)
 )ENGINE=MYISAM
 ;

@@ -5,8 +5,8 @@ DELIMITER |
 CREATE PROCEDURE p_generar_factura_de_venta(cliente_id INT,deposito_de_egreso_id INT,
 	condicion_id INT,fecha_de_emision DATE,fecha_de_vencimiento DATE)
 BEGIN
-	INSERT INTO Venta_facturas(cliente,deposito_egreso,condicion,fecha_emision,fecha_vencimiento)
-		VALUES(cliente_id,deposito_de_egreso_id,condicion_id,fecha_de_emision,fecha_de_vencimiento);
+	INSERT INTO Venta_facturas(cliente,deposito_egreso,condicion,fecha_emision,fecha_vencimiento, monto_total,saldo)
+		VALUES(cliente_id,deposito_de_egreso_id,condicion_id,fecha_de_emision,fecha_de_vencimiento,0,0);
 END | 
 DELIMITER ;
 
@@ -28,8 +28,8 @@ DELIMITER |
 CREATE PROCEDURE p_generar_factura_de_compra(proveedor_id INT,deposito_de_ingreso_id INT,
 	condicion_id INT,fecha_de_emision DATE,fecha_de_vencimiento DATE)
 BEGIN
-	INSERT INTO Venta_facturas(proveedor,deposito_egreso,condicion,fecha_emision,fecha_vencimiento)
-		VALUES(proveedor_id,deposito_de_ingreso_id,condicion_id,fecha_de_emision,fecha_de_vencimiento);
+	INSERT INTO Compra_facturas(proveedor,deposito_ingreso,condicion,fecha_emision,fecha_vencimiento,monto_total,saldo)
+		VALUES(proveedor_id,deposito_de_ingreso_id,condicion_id,fecha_de_emision,fecha_de_vencimiento,0,0);
 END | 
 DELIMITER ;
 
@@ -124,6 +124,15 @@ BEGIN
 END | 
 DELIMITER ;
 
+DROP PROCEDURE IF EXISTS p_generar_transferencia;
+DELIMITER | 
+CREATE PROCEDURE p_generar_transferencia(encargado_traslado VARCHAR(100), autorizado_empleado_id INT, deposito_origen_id INT, deposito_destino_id INT)
+BEGIN
+	INSERT INTO Transferencias(encargado_traslado,autorizado_empleado,deposito_origen,deposito_destino)
+		VALUES(encargado_traslado,autorizado_empleado_id,deposito_origen_id,deposito_destino_id);
+END | 
+DELIMITER ;
+
 DROP PROCEDURE IF EXISTS p_agregar_transferencia_detalles;
 DELIMITER | 
 CREATE PROCEDURE p_agregar_transferencia_detalles(producto_id INT, cantidad_p DECIMAl(10,0))
@@ -135,15 +144,16 @@ BEGIN
 	
 	UPDATE Stocks s
 		SET cantidad = cantidad - cantidad_p
-		WHERE s.depositos_id = deposito_o;
+		WHERE s.depositos_id = deposito_o AND s.producto_id = producto_id;
 	UPDATE Stocks s 
 		SET cantidad = cantidad + cantidad_p
-		WHERE s.depositos_id = deposito_d;
+		WHERE s.depositos_id = deposito_d AND s.producto_id = producto_id;
 
 	INSERT INTO Transferencia_detalles(transferencia_id,producto_id,cantidad)
 		VALUES(id_transferencia,producto_id,cantidad_p);
 END | 
 DELIMITER ;
+
 
 DROP PROCEDURE IF EXISTS p_agregar_pago_cliente;
 DELIMITER |

@@ -82,7 +82,8 @@ insert into Stocks(producto_id,deposito_id,cantidad) values
 	(3,1,14),
 	(4,1,16),
 	(5,1,18),
-	(6,2,4);
+	(6,2,4),
+	(1,2,10);
 
 insert into Proveedores(id,nombre,direccion,telefono,contacto,mail,saldo,categoria) values
 	(1,'CablePar',1,071200093,'Juan Gomez','juan@gmail.com',1000000,1),
@@ -118,7 +119,9 @@ insert into Compra_facturas(id,proveedor,deposito_ingreso,condicion,fecha_emisio
 	(3,3,3,1,'13-05-16','13-05-20',34670,0),
 	(4,4,1,2,'13-05-18','13-05-21',112000,500000),
 	(5,5,3,2,'13-05-20','13-05-24',11111,1000000),
-	(6,6,3,1,'13-05-24','13-06-01',876543,0);
+	(6,6,3,1,'13-05-24','13-06-01',876543,0),
+	(7,3,3,1,'13-05-17','13-05-20',34670,0);
+	
 
 insert into Compra_detalles(id,compra_id,producto_id,costo_unitario,cantidad,iva) values
 	(1,1,1,800,10000,5),
@@ -126,7 +129,8 @@ insert into Compra_detalles(id,compra_id,producto_id,costo_unitario,cantidad,iva
 	(3,3,3,400,1000,0),
 	(4,4,4,1000,5000,10),
 	(5,5,5,1500,10000,10),
-	(6,6,6,1000,500,0);
+	(6,6,6,1000,500,0),
+	(7,7,2,1000,500,0);
 
 insert into Venta_facturas(id,cliente,fecha_emision,fecha_vencimiento,condicion,deposito_egreso,monto_total,saldo) values
 	(1,1,'13-05-10','13-05-18',1,1,10000,10000),
@@ -139,7 +143,7 @@ insert into Venta_facturas(id,cliente,fecha_emision,fecha_vencimiento,condicion,
 insert into Venta_detalles(id,venta_id,producto_id,precio_unitario,cantidad,iva,descuento) values
 	(1,1,1,800,10,5,1),
 	(2,2,2,300,5,10,1),
-	(3,3,3,400,10,0,0),
+	(3,3,2,400,10,0,0),
 	(4,4,4,1000,8,10,1),
 	(5,5,5,1500,5,10,0),
 	(6,6,6,1000,4,0,1);

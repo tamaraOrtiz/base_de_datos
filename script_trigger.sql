@@ -199,23 +199,34 @@ DROP PROCEDURE IF EXISTS p_agregar_transferencia_detalles;
 DELIMITER | 
 CREATE PROCEDURE p_agregar_transferencia_detalles(producto_id INT, cantidad_p DECIMAl(10,0))
 BEGIN
-	DECLARE id_transferencia, deposito_o , deposito_d  INT;
+	DECLARE id_transferencia, deposito_o , deposito_d,id_producto INT;
 	SET id_transferencia = (SELECT MAX(id) FROM Transferencias);
 	SET deposito_o = (SELECT deposito_origen FROM Transferencias t WHERE t.id = id_transferencia);
 	SET deposito_d = (SELECT deposito_destino FROM Transferencias t WHERE t.id = id_transferencia);
-	
-	UPDATE Stocks s
-		SET cantidad = cantidad - cantidad_p
-		WHERE s.deposito_id = deposito_o AND s.producto_id = producto_id;
-	UPDATE Stocks s 
-		SET cantidad = cantidad + cantidad_p
-		WHERE s.deposito_id = deposito_d AND s.producto_id = producto_id;
+	SET id_producto = (SELECT producto_id FROM Stocks s WHERE s.producto_id = producto_id AND s.deposito_id = deposito_d);
+	IF (id_producto IS NOT NULL) THEN
+		UPDATE Stocks s
+			SET cantidad = cantidad - cantidad_p
+			WHERE s.deposito_id = deposito_o AND s.producto_id = producto_id;
+		UPDATE Stocks s 
+			SET cantidad = cantidad + cantidad_p
+			WHERE s.deposito_id = deposito_d AND s.producto_id = producto_id;
+		ELSE 
+			UPDATE Stocks s
+				SET cantidad = cantidad - cantidad_p
+				WHERE s.deposito_id = deposito_o AND s.producto_id = producto_id;
+			INSERT INTO Stocks(producto_id,deposito_id,cantidad)
+				VALUES(producto_id,deposito_d,cantidad_p);
+		END IF;
 
-	INSERT INTO Transferencia_detalles(transferencia_id,producto_id,cantidad)
-		VALUES(id_transferencia,producto_id,cantidad_p);
+		INSERT INTO Transferencia_detalles(transferencia_id,producto_id,cantidad)
+			VALUES(id_transferencia,producto_id,cantidad_p);
+		
 END | 
 DELIMITER ;
-
+SELECT * FROM Stocks;
+call p_agregar_transferencia_detalles(4,3);
+SELECT * FROM Stocks;
 
 DROP PROCEDURE IF EXISTS p_agregar_pago_cliente;
 DELIMITER |

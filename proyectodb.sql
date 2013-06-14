@@ -343,9 +343,9 @@ CREATE TABLE Proveedores(
 
 CREATE TABLE Stocks(
     producto_id     INT               NOT NULL,
-    depositos_id    INT               NOT NULL,
+    deposito_id    INT               NOT NULL,
     cantidad        DECIMAL(10, 0)    NOT NULL,
-    PRIMARY KEY (producto_id, depositos_id)
+    PRIMARY KEY (producto_id, deposito_id)
 )ENGINE=MYISAM
 ;
 
@@ -591,7 +591,7 @@ CREATE INDEX Ref53 ON Proveedores(categoria)
 -- INDEX: Ref767 
 --
 
-CREATE INDEX Ref767 ON Stocks(depositos_id)
+CREATE INDEX Ref767 ON Stocks(deposito_id)
 ;
 -- 
 -- INDEX: Ref168 
@@ -879,7 +879,7 @@ ALTER TABLE Proveedores ADD CONSTRAINT RefDirecciones50
 --
 
 ALTER TABLE Stocks ADD CONSTRAINT RefDepositos67 
-    FOREIGN KEY (depositos_id)
+    FOREIGN KEY (deposito_id)
     REFERENCES Depositos(id)
 ;
 

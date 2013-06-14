@@ -76,7 +76,7 @@ insert into Depositos(id, direccion, nombre) values
 	(2,5,'Deposito A'),
 	(3,4,'Salon de Ventas Principal');
 
-insert into Stocks(producto_id,depositos_id,cantidad) values
+insert into Stocks(producto_id,deposito_id,cantidad) values
 	(1,1,10),
 	(2,1,12),
 	(3,1,14),

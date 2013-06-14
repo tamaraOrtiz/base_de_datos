@@ -47,13 +47,13 @@ insert into Categorias(id,nombre,linea_credito) values
 	(1,'minorista',2000000),
 	(2,'mayorista',10000000);
 
-insert into Productos(id,marca,linea,codigo_de_barra,descripcion,costo_unitario,iva_impuesto) values
-	(1,1,1,254678559,'4 mm',800,2),
-	(2,2,2,145758895,'macho',300,3),
-	(3,3,3,558799486,'1 mtr.',400,1),
-	(4,4,4,587945784,'3/4',1000,2),
-	(5,5,4,784595227,'blanco',1500,1),
-	(6,6,6,214557845,'60 w',1000,3);
+insert into Productos(id,marca,linea,codigo_de_barra,nombre,descripcion,costo_unitario,iva_impuesto) values
+	(1,1,1,254678559,'cable caoxil','4 mm',800,2),
+	(2,2,2,145758895,'toma corriente','macho',300,3),
+	(3,3,3,558799486,'jabalina','1 mtr.',400,1),
+	(4,4,4,587945784,'canho T','3/4',1000,2),
+	(5,5,4,784595227,'portafoco grande','blanco',1500,1),
+	(6,6,6,214557845,'foco grande','60 w',1000,3);
 
 insert into Empleados(id,nombre,direccion,telefono,mail) values
 	(1,'Juan Petta',1,'200305','juan@uni.edu.py'),
@@ -139,7 +139,7 @@ insert into Venta_facturas(id,cliente,fecha_emision,fecha_vencimiento,condicion,
 insert into Venta_detalles(id,venta_id,producto_id,precio_unitario,cantidad,iva,descuento) values
 	(1,1,1,800,10,5,1),
 	(2,2,2,300,5,10,1),
-	(3,3,1,400,10,0,0),
+	(3,3,3,400,10,0,0),
 	(4,4,4,1000,8,10,1),
 	(5,5,5,1500,5,10,0),
 	(6,6,6,1000,4,0,1);

@@ -186,7 +186,7 @@ CREATE TRIGGER t_stock BEFORE UPDATE ON Stocks
 FOR EACH ROW 
 BEGIN
 	#No se acepta stock de productos negativos
-	IF (NEW.cantidad < 0) THEN
+	IF (NEW.cantidad < 0 OR NEW.deposito_id IS NULL) THEN
 		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Error la cantidad en stock no es suficiente para cubrir la demanda';
 	END IF;
 END | 
@@ -244,7 +244,7 @@ DELIMITER ;
 
 DROP PROCEDURE IF EXISTS p_agregar_pago_cliente;
 DELIMITER |
-CREATE PROCEDURE p_agregar_pago_cliente(cliente_id INT, observacion DATE)
+CREATE PROCEDURE p_agregar_pago_cliente(cliente_id INT, observacion VARCHAR(100))
 BEGIN
 	DECLARE fecha_actual DATE;
 	SET fecha_actual = CURDATE();
@@ -299,7 +299,7 @@ DELIMITER ;
 
 DROP PROCEDURE IF EXISTS p_agregar_pago_proveedores;
 DELIMITER |
-CREATE PROCEDURE p_agregar_pago_proveedores(proveedor_id INT, observacion DATE)
+CREATE PROCEDURE p_agregar_pago_proveedores(proveedor_id INT, observacion VARCHAR(100))
 BEGIN
 	DECLARE fecha_actual DATE;
 	SET fecha_actual = CURDATE();

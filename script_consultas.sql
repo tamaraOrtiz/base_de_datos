@@ -9,8 +9,7 @@ SELECT MAX(t1.proveedor), MAX(t2.nombre), t3.producto_id, t4.nombre, MAX(t1.fech
 		WHERE (((t1.fecha_emision BETWEEN "13-05-15" AND "13-06-15") AND (t3.producto_id BETWEEN 2 AND 5)) AND((t1.proveedor = t2.id AND t3.producto_id = t4.id) AND t3.compra_id = t1.id))
 			GROUP BY t3.producto_id;
 
-SELECT t1.producto_id, t2.nombre, t3.proveedor, t4.nombre FROM Compra_detalles t1, Productos t2, Compra_facturas t3, Proveedores t4
-	WHERE();
+
 
 SELECT t1.id, t1.fecha_vencimiento, t1.cliente, t2.nombre, t1.saldo FROM Venta_facturas t1, Clientes t2
 	WHERE ((t1.fecha_vencimiento < CURDATE() AND t1.saldo > 0) AND t1.cliente = t2.id);
@@ -63,3 +62,4 @@ SELECT * FROM Transferencia_detalles;
 SELECT * FROM Transferencias;
 SELECT * FROM Venta_detalles;
 SELECT * FROM Venta_facturas;
+

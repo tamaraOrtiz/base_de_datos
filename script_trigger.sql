@@ -18,6 +18,10 @@ BEGIN
 	IF (NEW.fecha_emision < CURDATE() OR NEW.fecha_vencimiento < CURDATE()) THEN
 		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Fecha no valida';
 	END IF;
+	IF (NEW.saldo < 0) THEN
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'No puede haber saldo negativo';
+	END IF;
+	
 END|
 DELIMITER ;
 
@@ -40,6 +44,9 @@ FOR EACH ROW
 BEGIN
 	IF (NEW.fecha_emision < CURDATE() OR NEW.fecha_vencimiento < CURDATE()) THEN
 		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Fecha no valida';
+	END IF;
+	IF (NEW.saldo < 0) THEN
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'No puede haber saldo negativo';
 	END IF;
 END|
 DELIMITER ;
@@ -149,6 +156,30 @@ BEGIN
 END | 
 DELIMITER ;
 
+DROP TRIGGER IF EXISTS t_venta_factura;
+DELIMITER | 
+CREATE TRIGGER t_venta_factura BEFORE UPDATE ON Venta_Facturas
+FOR EACH ROW 
+BEGIN
+	#No se acepta stock de productos negativos
+	IF (NEW.saldo < 0) THEN
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'La Factura ya fue pagada';
+	END IF;
+END | 
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS t_compra_factura;
+DELIMITER | 
+CREATE TRIGGER t_compra_factura BEFORE UPDATE ON Compra_Facturas
+FOR EACH ROW 
+BEGIN
+	#No se acepta stock de productos negativos
+	IF (NEW.saldo < 0) THEN
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'La Factura ya fue pagada';
+	END IF;
+END | 
+DELIMITER ;
+
 DROP TRIGGER IF EXISTS t_stock;
 DELIMITER | 
 CREATE TRIGGER t_stock BEFORE UPDATE ON Stocks
@@ -160,22 +191,7 @@ BEGIN
 	END IF;
 END | 
 DELIMITER ;
-#===========================  PRUEBAS =============================================
-call p_generar_factura_de_venta(1,1,2,NOW(),NOW()); 	
-SELECT * FROM Venta_facturas;
-SELECT * FROM Venta_detalles;
-SELECT s.producto_id, s.deposito_id as 'deposito', s.cantidad
-	FROM Stocks s
-	WHERE s.producto_id = 1 and s.deposito_id = 1;										         # cliente,deposito,condicion,fecha,fecha
-call p_agregar_detalles_factura_de_venta(1,5,20);# producto,cantidad,descuent
-call p_agregar_detalles_factura_de_venta(1,3,30); # producto,cantidad,descuento (Segunda Prueba cambiar 2000 por 10000)
-call p_agregar_detalles_factura_de_venta(1,2,0); # producto,cantidad,descuento (Tercera Prueba cambiar 3 por 15000)
-SELECT * FROM Venta_facturas;
-SELECT * FROM Venta_detalles;
-SELECT s.producto_id, s.deposito_id as 'deposito', s.cantidad
-	FROM Stocks s
-	WHERE s.producto_id = 1 and s.deposito_id = 1;
-#===========================================================================
+
 
 DROP PROCEDURE IF EXISTS p_generar_transferencia;
 DELIMITER | 
@@ -224,9 +240,7 @@ BEGIN
 		
 END | 
 DELIMITER ;
-SELECT * FROM Stocks;
-call p_agregar_transferencia_detalles(4,3);
-SELECT * FROM Stocks;
+
 
 DROP PROCEDURE IF EXISTS p_agregar_pago_cliente;
 DELIMITER |
@@ -245,9 +259,9 @@ CREATE PROCEDURE p_ordenes_de_pago_clientes(factura_id INT, importe INT)
 BEGIN
 	DECLARE id_pc INT; 
 	SET id_pc = (SELECT MAX(id) FROM Pago_cliente);
-	UPDATE Venta_detalles vd 
+	UPDATE Venta_facturas vf
 		SET saldo = saldo - importe
-		WHERE vd.id = factura_id;
+		WHERE vf.id = factura_id;
 
 	INSERT INTO Ordenes_de_pago_clientes(pc_id,factura_id,importe)
 		VALUES(id_pc,factura_id,importe);
@@ -285,11 +299,11 @@ DELIMITER ;
 
 DROP PROCEDURE IF EXISTS p_agregar_pago_proveedores;
 DELIMITER |
-CREATE PROCEDURE p_agregar_pago_proveedores(proveerdor_id INT, observacion DATE)
+CREATE PROCEDURE p_agregar_pago_proveedores(proveedor_id INT, observacion DATE)
 BEGIN
 	DECLARE fecha_actual DATE;
 	SET fecha_actual = CURDATE();
-	INSERT INTO Pago_cliente(proveedor,fecha,observacion)
+	INSERT INTO Pago_proveedor(proveedor,fecha,observacion)
 		VALUES(proveedor_id,fecha_actual,observacion);
 END |
 DELIMITER ;
@@ -299,7 +313,7 @@ DELIMITER |
 CREATE PROCEDURE p_ordenes_de_pago_proveedores(factura_id INT, importe INT)
 BEGIN
 	DECLARE id_pp INT; 
-	SET id_pp = (SELECT MAX(id) FROM Pago_proveedores);
+	SET id_pp = (SELECT MAX(id) FROM Pago_proveedor);
 	UPDATE Compra_facturas cf
 		SET saldo = saldo - importe
 		WHERE cf.id = factura_id;
@@ -314,7 +328,7 @@ DELIMITER |
 CREATE PROCEDURE p_detalles_orden_de_pago_proveedores(forma_de_pago VARCHAR(100))
 BEGIN
 	DECLARE id_pp, orden_de_pago_id, importe_od INT; 
-	SET id_pp = (SELECT MAX(id) FROM Pago_proveedores);
+	SET id_pp = (SELECT MAX(id) FROM Pago_proveedor);
 	SET orden_de_pago_id = (SELECT MAX(id) FROM Ordenes_de_pago_proveedores);
 	SET importe_od = (SELECT importe FROM Ordenes_de_pago_proveedores op WHERE op.id = orden_de_pago_id);
 	INSERT INTO Detalles_orden_de_pago_proveedores(pp_id,orden_pago_id,importe,forma_de_pago)
@@ -334,3 +348,48 @@ BEGIN
 	END IF;
 END | 
 DELIMITER ;
+
+#===========================  PRUEBAS =============================================
+call p_generar_factura_de_venta(1,1,2,NOW(),NOW());
+call p_generar_factura_de_compra(1,1,2,NOW(),NOW());
+call p_agregar_detalles_factura_de_venta(1,5,20);# producto,cantidad,descuent
+call p_agregar_detalles_factura_de_venta(1,3,30); # producto,cantidad,descuento (Segunda Prueba cambiar 2000 por 10000)
+call p_agregar_detalles_factura_de_venta(1,2,0); # producto,cantidad,descuento (Tercera Prueba cambiar 3 por 15000)
+call p_generar_transferencia('Juan Miranda',1,2,1);
+SELECT * FROM Stocks;
+call p_agregar_transferencia_detalles(5,3);
+SELECT * FROM Stocks;
+call p_agregar_pago_cliente(1,'pago factura');
+call p_ordenes_de_pago_clientes(1,3000);
+call p_detalles_orden_de_pago_clientes('contado');
+call p_ordenes_de_pago_clientes(2,3000);
+call p_agregar_pago_proveedores(1,'pago factura');
+call p_ordenes_de_pago_proveedores(2,3000);
+call p_detalles_orden_de_pago_proveedores('contado');
+SELECT * FROM Calles;
+SELECT * FROM Categorias;
+SELECT * FROM Clientes;
+SELECT * FROM Compra_detalles;
+SELECT * FROM Compra_facturas;
+SELECT * FROM Condiciones;
+SELECT * FROM Depositos;
+SELECT * FROM Detalles_orden_de_pago_proveedores;
+SELECT * FROM Direcciones;
+SELECT * FROM Empleados;
+SELECT * FROM Impuestos;
+SELECT * FROM Lineas_productos;
+SELECT * FROM Lista_precios;
+SELECT * FROM Marcas_productos;
+SELECT * FROM Ordenes_de_pago_clientes;
+SELECT * FROM Ordenes_de_pago_proveedores;
+SELECT * FROM Pago_cliente;
+SELECT * FROM Pago_proveedor;
+SELECT * FROM Productos;
+SELECT * FROM Proveedores;
+SELECT * FROM Stocks;
+SELECT * FROM Transferencia_detalles;
+SELECT * FROM Transferencias;
+SELECT * FROM Venta_detalles;
+SELECT * FROM Venta_facturas;
+
+#===========================================================================

@@ -133,9 +133,9 @@ insert into Compra_detalles(id,compra_id,producto_id,costo_unitario,cantidad,iva
 	(7,7,2,1000,500,0);
 
 insert into Venta_facturas(id,cliente,fecha_emision,fecha_vencimiento,condicion,deposito_egreso,monto_total,saldo) values
-	(1,1,'13-05-10','13-05-18',1,1,10000,10000),
+	(1,1,'13-05-10','13-05-18',2,1,10000,10000),
 	(2,2,'13-05-08','13-06-23',2,2,16000,0),
-	(3,3,'13-05-13','13-05-20',2,3,53000,0),
+	(3,3,'13-05-13','13-05-20',1,3,53000,0),
 	(4,4,'13-05-18','13-05-21',1,3,15000,0),
 	(5,5,'13-05-20','13-05-24',2,1,45000,45000),
 	(6,6,'13-05-24','13-06-01',1,1,2400,0);

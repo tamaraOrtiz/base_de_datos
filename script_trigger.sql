@@ -10,7 +10,6 @@ BEGIN
 END | 
 DELIMITER ;
 
-
 DROP TRIGGER IF EXISTS t_factura_de_venta;
 DELIMITER | 
 CREATE TRIGGER t_factura_de_venta BEFORE INSERT ON Venta_facturas
@@ -52,7 +51,6 @@ DELIMITER |
 * producto_agregado_id	es la referencia a un objeto del tipo producto
 * cantidad_vcomprada		es la cantidad de productos comprada
 */ 
-
 CREATE PROCEDURE p_agregar_detalles_factura_de_compra(producto_agregado_id INT,cantidad_comprada INT)
 BEGIN
 	DECLARE id_compra, condicion_de_venta,precio_por_unidad,iva_id, costo_del_detalle INT;
@@ -65,7 +63,33 @@ BEGIN
 END | 
 DELIMITER ;
 
-
+DROP TRIGGER IF EXISTS t_compra_detalles;
+DELIMITER | 
+CREATE TRIGGER t_compra_detalles BEFORE INSERT ON Compra_detalles
+FOR EACH ROW 
+BEGIN
+	DECLARE deposito, limite_credito,condicion_de_compra, cantidad_stock,saldo_actual,last_insert_id INT;
+	SET limite_credito = 1000000;
+	SET saldo_actual = (SELECT saldo FROM Compra_facturas cf WHERE cf.id = NEW.compra_id);
+	SET condicion_de_venta = (SELECT condicion FROM Compra_facturas cf WHERE cf.id = NEW.compra_id);
+	IF (saldo_actual > limite_credito) THEN
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Error: Imposible realizar la operacion porque se superara la linea de credito disponible';
+	END IF;
+	
+	SET last_insert_id = (SELECT MAX(id) FROM Compra_facturas);
+	SET deposito = (SELECT deposito_ingreso FROM Compra_facturas vf WHERE vf.id = last_insert_id);
+	SET cantidad_stock = (SELECT cantidad FROM Stocks s WHERE s.deposito_id = deposito and s.producto_id = NEW.producto_id );
+	
+	IF (condicion_de_venta =2) THEN
+		UPDATE Venta_facturas vf
+			SET saldo = saldo_actual + NEW.precio_unitario*NEW.cantidad
+			WHERE vf.id = last_insert_id;
+	END IF;
+	UPDATE Venta_facturas vf
+		SET monto_total = monto_total + NEW.precio_unitario*NEW.cantidad
+		WHERE vf.id = last_insert_id;
+END | 
+DELIMITER ;
 
 DROP PROCEDURE IF EXISTS p_agregar_detalles_factura_de_venta;
 DELIMITER |
@@ -76,7 +100,7 @@ DELIMITER |
 */ 
 CREATE PROCEDURE p_agregar_detalles_factura_de_venta(producto_agregado_id INT,cantidad_vendida INT, descuento INT)
 BEGIN
-	DECLARE id_venta, condicion_de_venta,precio_por_unidad,iva_id, cantidad_stock, costo_del_detalle,descuento_limite INT;
+	DECLARE id_venta,precio_por_unidad,iva_id,costo_del_detalle,descuento_limite INT;
 	SET id_venta = (SELECT MAX(id) FROM Venta_facturas);
 	SET precio_por_unidad = (SELECT costo_unitario FROM Productos p WHERE p.id = producto_agregado_id);
 	SET iva_id = (SELECT iva_impuesto FROM Productos p WHERE p.id = producto_agregado_id);
@@ -87,33 +111,71 @@ END |
 DELIMITER ;
 
 
-
 DROP TRIGGER IF EXISTS t_venta_detalles;
 DELIMITER | 
 CREATE TRIGGER t_venta_detalles BEFORE INSERT ON Venta_detalles
 FOR EACH ROW 
 BEGIN
-	DECLARE deposito, limite_credito,condicion_de_venta, limite_descuento, cantidad_stock INTEGER;
+	DECLARE deposito, limite_credito,condicion_de_venta, limite_descuento, cantidad_stock,saldo_actual,last_insert_id INT;
 	SET limite_credito = 1000000;
+	SET saldo_actual = (SELECT saldo FROM Venta_facturas vf WHERE vf.id = NEW.venta_id);
 	SET condicion_de_venta = (SELECT condicion FROM Venta_facturas vf WHERE vf.id = NEW.venta_id);
-	IF (NEW.saldo> limite_credito) THEN
-		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Error Saldo inferior al maximo de descuento permitido para esta cuenta';
+	#
+	#CAMBIAR PORQUE EL SALDO DEBE ESTAR EN LA FACTURA SI LO QUE IMPIDE A UN CLIENTE SEGUIR COMPRANDO ES SU LINEA DE CREDITO
+	#
+	IF (saldo_actual > limite_credito) THEN
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Error: Imposible realizar la operacion porque se superara la linea de credito disponible';
 	END IF;
-	SET limite_descuento = IF(condicion_de_venta=1,NEW.monto_total*20/100,NEW.monto_total*10/100);
+	SET limite_descuento = IF(condicion_de_venta=1,
+								(NEW.precio_unitario*NEW.cantidad*20/100), #Si true para contado
+								 NEW.precio_unitario*NEW.cantidad*10/100);	 #Si false para contado
 	IF (NEW.descuento > limite_descuento) THEN
-		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Error descuento mayor al limite_descuento';
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Error: Imposible realizar la operacion porque descuento mayor al limite_descuento';
 	END IF;
-	SET cantidad_stock = (SELECT SUM(cantidad) FROM Stocks s WHERE s.producto_id = producto_id);
-	IF (cantidad_stock < NEW.cantidad ) THEN
-		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Error la cantidad en stock no es suficiente para cubrir la demanda';
-	END IF;
-	SET deposito = (SELECT deposito_egreso FROM Venta_facturas vf WHERE vf.id = last_insert_id());
+	SET last_insert_id = (SELECT MAX(id) FROM Venta_facturas);
+	SET deposito = (SELECT deposito_egreso FROM Venta_facturas vf WHERE vf.id = last_insert_id);
+	SET cantidad_stock = (SELECT cantidad FROM Stocks s WHERE s.deposito_id = deposito and s.producto_id = NEW.producto_id );
 	UPDATE Stocks s
-		SET cantidad = cantidad - NEW.cantidad
-		WHERE s.depositos_id = deposito and s.producto_id = NEW.producto_id;
-	
+		SET cantidad = (cantidad_stock-NEW.cantidad)
+		WHERE s.deposito_id = deposito and s.producto_id = NEW.producto_id;
+	IF (condicion_de_venta =2) THEN
+		UPDATE Venta_facturas vf
+			SET saldo = saldo_actual + NEW.precio_unitario*NEW.cantidad
+			WHERE vf.id = last_insert_id;
+	END IF;
+	UPDATE Venta_facturas vf
+		SET monto_total = monto_total + NEW.precio_unitario*NEW.cantidad
+		WHERE vf.id = last_insert_id;
 END | 
 DELIMITER ;
+
+DROP TRIGGER IF EXISTS t_stock;
+DELIMITER | 
+CREATE TRIGGER t_stock BEFORE UPDATE ON Stocks
+FOR EACH ROW 
+BEGIN
+	#No se acepta stock de productos negativos
+	IF (NEW.cantidad < 0) THEN
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Error la cantidad en stock no es suficiente para cubrir la demanda';
+	END IF;
+END | 
+DELIMITER ;
+#===========================  PRUEBAS =============================================
+call p_generar_factura_de_venta(1,1,2,NOW(),NOW()); 	
+SELECT * FROM Venta_facturas;
+SELECT * FROM Venta_detalles;
+SELECT s.producto_id, s.deposito_id as 'deposito', s.cantidad
+	FROM Stocks s
+	WHERE s.producto_id = 1 and s.deposito_id = 1;										         # cliente,deposito,condicion,fecha,fecha
+call p_agregar_detalles_factura_de_venta(1,5,20);# producto,cantidad,descuent
+call p_agregar_detalles_factura_de_venta(1,3,30); # producto,cantidad,descuento (Segunda Prueba cambiar 2000 por 10000)
+call p_agregar_detalles_factura_de_venta(1,2,0); # producto,cantidad,descuento (Tercera Prueba cambiar 3 por 15000)
+SELECT * FROM Venta_facturas;
+SELECT * FROM Venta_detalles;
+SELECT s.producto_id, s.deposito_id as 'deposito', s.cantidad
+	FROM Stocks s
+	WHERE s.producto_id = 1 and s.deposito_id = 1;
+#===========================================================================
 
 DROP PROCEDURE IF EXISTS p_generar_transferencia;
 DELIMITER | 
@@ -144,10 +206,10 @@ BEGIN
 	
 	UPDATE Stocks s
 		SET cantidad = cantidad - cantidad_p
-		WHERE s.depositos_id = deposito_o AND s.producto_id = producto_id;
+		WHERE s.deposito_id = deposito_o AND s.producto_id = producto_id;
 	UPDATE Stocks s 
 		SET cantidad = cantidad + cantidad_p
-		WHERE s.depositos_id = deposito_d AND s.producto_id = producto_id;
+		WHERE s.deposito_id = deposito_d AND s.producto_id = producto_id;
 
 	INSERT INTO Transferencia_detalles(transferencia_id,producto_id,cantidad)
 		VALUES(id_transferencia,producto_id,cantidad_p);
@@ -208,16 +270,7 @@ END |
 DELIMITER ;
 
 
-DROP TRIGGER IF EXISTS t_stock;
-DELIMITER | 
-CREATE TRIGGER t_stock BEFORE UPDATE ON Stocks
-FOR EACH ROW 
-BEGIN
-	IF (NEW.cantidad < 0) THEN
-		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Error la cantidad en stock no es suficiente para cubrir la demanda';
-	END IF;
-END | 
-DELIMITER ;
+
 
 DROP PROCEDURE IF EXISTS p_agregar_pago_proveedores;
 DELIMITER |
@@ -270,13 +323,3 @@ BEGIN
 	END IF;
 END | 
 DELIMITER ;
-
-SELECT * FROM Compra_facturas;
-SELECT * FROM Venta_detalles;
-SELECT * FROM Stocks;
-call p_generar_factura_de_venta(1,1,1,NOW(),NOW()); 
-call p_agregar_detalles_factura_de_venta(1,3,200);
--- call p_agregar_transferencia_detalles(1,3);
-SELECT * FROM Venta_facturas;
-SELECT * FROM Venta_detalles;
-SELECT * FROM Stocks;

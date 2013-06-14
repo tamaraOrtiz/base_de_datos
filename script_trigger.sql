@@ -36,7 +36,7 @@ DELIMITER ;
 
 DROP TRIGGER IF EXISTS t_factura_de_compra;
 DELIMITER | 
-CREATE TRIGGER t_factura_de_compra BEFORE INSERT ON Venta_facturas
+CREATE TRIGGER t_factura_de_compra BEFORE INSERT ON Compra_facturas
 FOR EACH ROW
 BEGIN
 	IF (NEW.fecha_emision < CURDATE() OR NEW.fecha_vencimiento < CURDATE()) THEN

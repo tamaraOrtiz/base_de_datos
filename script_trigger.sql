@@ -78,7 +78,7 @@ BEGIN
 	DECLARE deposito, limite_credito,condicion_de_compra, cantidad_stock,saldo_actual,last_insert_id INT;
 	SET limite_credito = 1000000;
 	SET saldo_actual = (SELECT saldo FROM Compra_facturas cf WHERE cf.id = NEW.compra_id);
-	SET condicion_de_venta = (SELECT condicion FROM Compra_facturas cf WHERE cf.id = NEW.compra_id);
+	SET condicion_de_compra = (SELECT condicion FROM Compra_facturas cf WHERE cf.id = NEW.compra_id);
 	IF (saldo_actual > limite_credito) THEN
 		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Error: Imposible realizar la operacion porque se superara la linea de credito disponible';
 	END IF;
@@ -87,14 +87,17 @@ BEGIN
 	SET deposito = (SELECT deposito_ingreso FROM Compra_facturas vf WHERE vf.id = last_insert_id);
 	SET cantidad_stock = (SELECT cantidad FROM Stocks s WHERE s.deposito_id = deposito and s.producto_id = NEW.producto_id );
 	
-	IF (condicion_de_venta =2) THEN
-		UPDATE Venta_facturas vf
-			SET saldo = saldo_actual + NEW.precio_unitario*NEW.cantidad
-			WHERE vf.id = last_insert_id;
+	IF (condicion_de_compra =2) THEN
+		UPDATE Compra_facturas cf
+			SET saldo = saldo_actual + NEW.costo_unitario*NEW.cantidad
+			WHERE cf.id = last_insert_id;
 	END IF;
-	UPDATE Venta_facturas vf
-		SET monto_total = monto_total + NEW.precio_unitario*NEW.cantidad
-		WHERE vf.id = last_insert_id;
+	UPDATE Compra_facturas cf
+		SET monto_total = monto_total + NEW.costo_unitario*NEW.cantidad
+		WHERE cf.id = last_insert_id;
+	UPDATE Stocks s
+		SET cantidad = (cantidad_stock+NEW.cantidad)
+		WHERE s.deposito_id = deposito and s.producto_id = NEW.producto_id;
 END | 
 DELIMITER ;
 
@@ -151,14 +154,14 @@ BEGIN
 			WHERE vf.id = last_insert_id;
 	END IF;
 	UPDATE Venta_facturas vf
-		SET monto_total = monto_total + NEW.precio_unitario*NEW.cantidad
+		SET monto_total = monto_total + NEW.precio_unitario*NEW.cantidad-NEW.descuento
 		WHERE vf.id = last_insert_id;
 END | 
 DELIMITER ;
 
 DROP TRIGGER IF EXISTS t_venta_factura;
 DELIMITER | 
-CREATE TRIGGER t_venta_factura BEFORE UPDATE ON Venta_Facturas
+CREATE TRIGGER t_venta_factura BEFORE UPDATE ON Venta_facturas
 FOR EACH ROW 
 BEGIN
 	#No se acepta stock de productos negativos
@@ -170,7 +173,7 @@ DELIMITER ;
 
 DROP TRIGGER IF EXISTS t_compra_factura;
 DELIMITER | 
-CREATE TRIGGER t_compra_factura BEFORE UPDATE ON Compra_Facturas
+CREATE TRIGGER t_compra_factura BEFORE UPDATE ON Compra_facturas
 FOR EACH ROW 
 BEGIN
 	#No se acepta stock de productos negativos
@@ -185,8 +188,9 @@ DELIMITER |
 CREATE TRIGGER t_stock BEFORE UPDATE ON Stocks
 FOR EACH ROW 
 BEGIN
+	DECLARE producto INT;
 	#No se acepta stock de productos negativos
-	IF (NEW.cantidad < 0 OR NEW.deposito_id IS NULL) THEN
+	IF (NEW.cantidad < 0) THEN
 		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Error la cantidad en stock no es suficiente para cubrir la demanda';
 	END IF;
 END | 
@@ -215,11 +219,17 @@ DROP PROCEDURE IF EXISTS p_agregar_transferencia_detalles;
 DELIMITER | 
 CREATE PROCEDURE p_agregar_transferencia_detalles(producto_id INT, cantidad_p DECIMAl(10,0))
 BEGIN
-	DECLARE id_transferencia, deposito_o , deposito_d,id_producto INT;
+	DECLARE id_transferencia, deposito_o , deposito_d,id_producto, producto INT;
 	SET id_transferencia = (SELECT MAX(id) FROM Transferencias);
 	SET deposito_o = (SELECT deposito_origen FROM Transferencias t WHERE t.id = id_transferencia);
 	SET deposito_d = (SELECT deposito_destino FROM Transferencias t WHERE t.id = id_transferencia);
 	SET id_producto = (SELECT producto_id FROM Stocks s WHERE s.producto_id = producto_id AND s.deposito_id = deposito_d);
+	
+	SET producto = (SELECT producto_id FROM Stocks s WHERE s.producto_id = producto_id AND s.deposito_id = deposito_d);
+	IF (producto IS NULL) THEN
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Error: El producto no existe en el deposito solicitado';
+	END IF;
+	
 	IF (id_producto IS NOT NULL) THEN
 		UPDATE Stocks s
 			SET cantidad = cantidad - cantidad_p
@@ -355,9 +365,14 @@ call p_generar_factura_de_compra(1,1,2,NOW(),NOW());
 call p_agregar_detalles_factura_de_venta(1,5,20);# producto,cantidad,descuent
 call p_agregar_detalles_factura_de_venta(1,3,30); # producto,cantidad,descuento (Segunda Prueba cambiar 2000 por 10000)
 call p_agregar_detalles_factura_de_venta(1,2,0); # producto,cantidad,descuento (Tercera Prueba cambiar 3 por 15000)
-call p_generar_transferencia('Juan Miranda',1,2,1);
+
+call p_agregar_detalles_factura_de_compra(1,5);# producto,cantidad,descuent
+call p_agregar_detalles_factura_de_compra(1,3); # producto,cantidad,descuento (Segunda Prueba cambiar 2000 por 10000)
+call p_agregar_detalles_factura_de_compra(1,2); # producto,cantidad,descuento (Tercera Prueba cambiar 3 por 15000)
+
+call p_generar_transferencia('Juan Miranda',1,2,1); #encargado del translado, empleado, d_origen, d_destino
 SELECT * FROM Stocks;
-call p_agregar_transferencia_detalles(5,3);
+call p_agregar_transferencia_detalles(5,3);#producto
 SELECT * FROM Stocks;
 call p_agregar_pago_cliente(1,'pago factura');
 call p_ordenes_de_pago_clientes(1,3000);
